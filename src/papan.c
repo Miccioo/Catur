@@ -4,7 +4,7 @@
 
 void initPapan(Papan *papan) {
     // Inisialisasi papan kosong
-    int y, x;
+    int x, y; 
     for (y = 0; y < UKURAN_PAPAN; y++) {
         for (x = 0; x < UKURAN_PAPAN; x++) {
             Bidak kosong;
@@ -14,90 +14,115 @@ void initPapan(Papan *papan) {
     }
     
     // Inisialisasi bidak putih
-    int idCounter = 0;
+    int idCounter = 0; 
     
-    // Benteng
+    // Baris 0 (indeks 0): Benteng, Kuda, Gajah, Menteri, Raja, Gajah, Kuda, Benteng (Putih)
     initBidak(&(papan->grid[0][0]), BENTENG, PUTIH, 0, 0, idCounter++);
+    initBidak(&(papan->grid[0][1]), KUDA, PUTIH, 1, 0, idCounter++);
+    initBidak(&(papan->grid[0][2]), GAJAH, PUTIH, 2, 0, idCounter++);
+    initBidak(&(papan->grid[0][3]), MENTERI, PUTIH, 3, 0, idCounter++);
+    initBidak(&(papan->grid[0][4]), RAJA, PUTIH, 4, 0, idCounter++);
+    initBidak(&(papan->grid[0][5]), GAJAH, PUTIH, 5, 0, idCounter++);
+    initBidak(&(papan->grid[0][6]), KUDA, PUTIH, 6, 0, idCounter++);
     initBidak(&(papan->grid[0][7]), BENTENG, PUTIH, 7, 0, idCounter++);
     
-    // Kuda
-    initBidak(&(papan->grid[0][1]), KUDA, PUTIH, 1, 0, idCounter++);
-    initBidak(&(papan->grid[0][6]), KUDA, PUTIH, 6, 0, idCounter++);
-    
-    // Gajah
-    initBidak(&(papan->grid[0][2]), GAJAH, PUTIH, 2, 0, idCounter++);
-    initBidak(&(papan->grid[0][5]), GAJAH, PUTIH, 5, 0, idCounter++);
-    
-    // Menteri
-    initBidak(&(papan->grid[0][3]), MENTERI, PUTIH, 3, 0, idCounter++);
-    
-    // Raja
-    initBidak(&(papan->grid[0][4]), RAJA, PUTIH, 4, 0, idCounter++);
-    
-    // Pion
+    // Baris 1 (indeks 1): Pion Putih
     for (x = 0; x < UKURAN_PAPAN; x++) {
         initBidak(&(papan->grid[1][x]), PION, PUTIH, x, 1, idCounter++);
     }
     
     // Inisialisasi bidak hitam
-    // Benteng
+    // Baris 7 (indeks 7): Benteng, Kuda, Gajah, Menteri, Raja, Gajah, Kuda, Benteng (Hitam)
     initBidak(&(papan->grid[7][0]), BENTENG, HITAM, 0, 7, idCounter++);
+    initBidak(&(papan->grid[7][1]), KUDA, HITAM, 1, 7, idCounter++);
+    initBidak(&(papan->grid[7][2]), GAJAH, HITAM, 2, 7, idCounter++);
+    initBidak(&(papan->grid[7][3]), MENTERI, HITAM, 3, 7, idCounter++);
+    initBidak(&(papan->grid[7][4]), RAJA, HITAM, 4, 7, idCounter++);
+    initBidak(&(papan->grid[7][5]), GAJAH, HITAM, 5, 7, idCounter++);
+    initBidak(&(papan->grid[7][6]), KUDA, HITAM, 6, 7, idCounter++);
     initBidak(&(papan->grid[7][7]), BENTENG, HITAM, 7, 7, idCounter++);
     
-    // Kuda
-    initBidak(&(papan->grid[7][1]), KUDA, HITAM, 1, 7, idCounter++);
-    initBidak(&(papan->grid[7][6]), KUDA, HITAM, 6, 7, idCounter++);
-    
-    // Gajah
-    initBidak(&(papan->grid[7][2]), GAJAH, HITAM, 2, 7, idCounter++);
-    initBidak(&(papan->grid[7][5]), GAJAH, HITAM, 5, 7, idCounter++);
-    
-    // Menteri
-    initBidak(&(papan->grid[7][3]), MENTERI, HITAM, 3, 7, idCounter++);
-    
-    // Raja
-    initBidak(&(papan->grid[7][4]), RAJA, HITAM, 4, 7, idCounter++);
-    
-    // Pion
+    // Baris 6 (indeks 6): Pion Hitam
     for (x = 0; x < UKURAN_PAPAN; x++) {
         initBidak(&(papan->grid[6][x]), PION, HITAM, x, 6, idCounter++);
     }
 }
 
 void printPapan(Papan papan) {
-    printf("\n   a b c d e f g h\n");
-    printf("  +---------------+\n");
-    int y, x;
-    
-    for (y = 0; y < UKURAN_PAPAN; y++) {
-        printf("%d |", 8 - y);
-        for (x = 0; x < UKURAN_PAPAN; x++) {
-            Bidak b = papan.grid[y][x];
-            
-            char simbol;
-            switch(b.tipe) {
-                case PION:      simbol = 'P'; break;
-                case BENTENG:   simbol = 'B'; break;
-                case KUDA:     simbol = 'K'; break;
-                case GAJAH:    simbol = 'G'; break;
-                case MENTERI:   simbol = 'M'; break;
-                case RAJA:      simbol = 'R'; break;
-                default:        simbol = '.'; break;
-            }
-            
-            // Huruf kecil untuk hitam
-            if (b.warna == HITAM && b.tipe != TIDAK_ADA) {
-                simbol += 32; // Konversi ke lowercase
-            }
-            
-            printf("%c ", simbol);
-        }
-        printf("| %d\n", 8 - y);
+    // Menggunakan macro dari bidak.h untuk konsistensi
+    const int VISUAL_HEIGHT = BIDAK_VISUAL_HEIGHT;
+    const int CELL_WIDTH = BIDAK_VISUAL_WIDTH;
+
+    int x, y, i, row_visual; 
+    char col_char_val; 
+
+    // Cetak label kolom di atas
+    printf("\n    "); // 4 spasi awal untuk mengimbangi label baris
+    for (col_char_val = 0; col_char_val < UKURAN_PAPAN; col_char_val++) {
+        // CELL_WIDTH = 21. Kita ingin karakter di tengah.
+        // spasi kiri = (CELL_WIDTH - 1) / 2 = (21-1)/2 = 10
+        // spasi kanan = CELL_WIDTH - 1 - spasi_kiri = 21 - 1 - 10 = 10
+        printf("          %c          ", 'a' + col_char_val); // 10 spasi, char, 10 spasi
     }
-    
-    printf("  +---------------+\n");
-    printf("   a b c d e f g h\n\n");
+    printf("\n");
+
+    // Cetak garis horizontal atas
+    printf("   +"); // Awalan untuk garis horizontal atas
+    for (x = 0; x < UKURAN_PAPAN; x++) {
+        for (i = 0; i < CELL_WIDTH; i++) {
+            printf("-");
+        }
+        printf("+");
+    }
+    printf("\n");
+
+    for (y = 0; y < UKURAN_PAPAN; y++) {
+        for (row_visual = 0; row_visual < VISUAL_HEIGHT; row_visual++) {
+            if (row_visual == VISUAL_HEIGHT / 2) { 
+                printf("%d  |", 8 - y); // Angka baris di tengah tinggi sel
+            } else {
+                printf("   |"); // Padding untuk angka baris
+            }
+
+            for (x = 0; x < UKURAN_PAPAN; x++) {
+                Bidak b = papan.grid[y][x];
+                
+                if (b.warna == HITAM) {
+                    printf("\033[0;31m");  
+                } else if (b.warna == PUTIH) {
+                    printf("\033[0;37m");  
+                }
+                
+                printf("%s", getBidakVisualLine(b.tipe, row_visual));
+                
+                printf("\033[0m"); // Reset warna
+                printf("|");
+            }
+            if (row_visual == VISUAL_HEIGHT / 2) { 
+                 printf(" %d\n", 8 - y); // Angka baris di tengah tinggi sel
+            } else {
+                 printf("\n");
+            }
+        }
+        // Cetak garis horizontal antar baris
+        printf("   +"); 
+        for (x = 0; x < UKURAN_PAPAN; x++) {
+            for (i = 0; i < CELL_WIDTH; i++) {
+                printf("-");
+            }
+            printf("+");
+        }
+        printf("\n");
+    }
+
+    // Cetak label kolom di bawah
+    printf("    "); 
+    for (col_char_val = 0; col_char_val < UKURAN_PAPAN; col_char_val++) {
+        printf("          %c          ", 'a' + col_char_val); // 10 spasi, char, 10 spasi
+    }
+    printf("\n\n");
 }
+
 
 Bidak getBidakAt(Papan papan, int x, int y) {
     if (x >= 0 && x < UKURAN_PAPAN && y >= 0 && y < UKURAN_PAPAN) {
@@ -127,7 +152,8 @@ void pindahkanBidak(Papan *papan, int xAwal, int yAwal, int xTujuan, int yTujuan
         // Kosongkan posisi awal
         Bidak kosong;
         initBidak(&kosong, TIDAK_ADA, TANPA_WARNA, xAwal, yAwal, -1);
-        papan->grid[yAwal][xAwal] = kosong;
+        // Perbaiki typo di baris ini: xAawal menjadi xAwal
+        papan->grid[yAwal][xAwal] = kosong; 
         
         // Pindahkan ke posisi tujuan
         setBidakAt(papan, bidak, xTujuan, yTujuan);

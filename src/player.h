@@ -1,7 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "bidak.h"
+#include "bidak.h" // Tambahkan ini
 
 #define MAX_NAMA 50
 
