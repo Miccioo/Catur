@@ -1,0 +1,38 @@
+#ifndef BIDAK_H
+#define BIDAK_H
+
+// Enum untuk tipe bidak
+typedef enum {
+    PION,
+    BENTENG,
+    KUDA,
+    GAJAH,
+    MENTERI,
+    RAJA,
+    TIDAK_ADA  // Untuk kotak kosong
+} TipeBidak;
+
+// Enum untuk warna bidak
+typedef enum {
+    PUTIH,
+    HITAM,
+    TANPA_WARNA  // Untuk kotak kosong
+} WarnaBidak;
+
+// Struct untuk bidak catur
+typedef struct {
+    TipeBidak tipe;
+    WarnaBidak warna;
+    int x;          // Posisi x (0-7)
+    int y;          // Posisi y (0-7)
+    int hasMoved;   // 0 = belum pernah bergerak, 1 = sudah
+    int id;         // ID unik untuk bidak
+} Bidak;
+
+// Fungsi untuk inisialisasi bidak
+void initBidak(Bidak *bidak, TipeBidak tipe, WarnaBidak warna, int x, int y, int id);
+
+// Fungsi untuk menampilkan info bidak (debugging)
+void printBidak(Bidak bidak);
+
+#endif
