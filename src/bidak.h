@@ -35,4 +35,14 @@ void initBidak(Bidak *bidak, TipeBidak tipe, WarnaBidak warna, int x, int y, int
 // Fungsi untuk menampilkan info bidak (debugging)
 void printBidak(Bidak bidak);
 
+// Fungsi baru: Mengembalikan string untuk satu baris visual bidak
+// Kita perlu mendefinisikan tinggi dan lebar visual di sini
+#define BIDAK_VISUAL_HEIGHT 15 // Tinggi maksimum dari Raja
+#define BIDAK_VISUAL_WIDTH 21  // Lebar sel disesuaikan untuk tampilan persegi
+
+const char* getBidakVisualLine(TipeBidak tipe, int line_idx);
+
+// Fungsi untuk menampilkan representasi grafis bidak (individu)
+void tampilkanBidakVisual(TipeBidak tipe, WarnaBidak warna);
+
 #endif
