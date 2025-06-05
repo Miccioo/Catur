@@ -1,6 +1,7 @@
 #ifndef CHESS_MOVE_H
 #define CHESS_MOVE_H
 #include <stdbool.h>
+#include "src/bidak.h"
 
 // Struct representasi posisi pada papan catur
 typedef struct {
@@ -12,15 +13,15 @@ typedef struct {
 typedef struct {
     Position from;      // Posisi awal bidak
     Position to;        // Posisi tujuan bidak
-    char piece;         // Jenis bidak yang gerak
-    char captured;      // Bidak yang dimakan (jika ada)
+    TipeBidak bidak;         // Jenis bidak yang gerak
+    TipeBidak captured;      // Bidak yang dimakan (jika ada)
     bool isCheck;       // cek status skak
     bool isCheckmate;   // cek status skakmat
 } Move;
 
 // Node untuk Stack dan Linked List
 typedef struct MoveNode {
-    Move data;
+    Move move;
     struct MoveNode* next;
 } MoveNode;
 
@@ -54,7 +55,7 @@ void clearList(MoveList* list);
 void destroyList(MoveList* list);
 
 // Function untuk utilitas
-Move createMove(Position from, Position to, char piece);
+Move createMove(Position from, Position to, TipeBidak piece);
 void printMove(Move move);
 bool isValidPosition(Position pos);
 

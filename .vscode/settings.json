@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "gamestate.h": "c",
+        "papan.h": "c",
+        "boolean.h": "c",
+        "bidak.h": "c"
+    }
+}

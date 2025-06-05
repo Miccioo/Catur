@@ -56,5 +56,6 @@ void aboutScreen(int termWidth);
 void settingsScreen(int termWidth);
 void waitForKeyPress();
 int getKeyPress();
+void showNewGameOption(int termWidth);
 
-#endif // MENU_H
+#endif

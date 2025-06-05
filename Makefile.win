@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = main.o Gamestate.o ai_engine.o
-LINKOBJ  = main.o Gamestate.o ai_engine.o
+OBJ      = main.o ai_engine.o src/bidak.o src/menu.o src/papan.o src/player.o chess_move.o Gamestate.o validator.o chessController.o
+LINKOBJ  = main.o ai_engine.o src/bidak.o src/menu.o src/papan.o src/player.o chess_move.o Gamestate.o validator.o chessController.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -27,8 +27,29 @@ $(BIN): $(OBJ)
 main.o: main.c
 	$(CC) -c main.c -o main.o $(CFLAGS)
 
-Gamestate.o: Gamestate.cpp
-	$(CC) -c Gamestate.cpp -o Gamestate.o $(CFLAGS)
-
 ai_engine.o: ai_engine.c
 	$(CC) -c ai_engine.c -o ai_engine.o $(CFLAGS)
+
+src/bidak.o: src/bidak.c
+	$(CC) -c src/bidak.c -o src/bidak.o $(CFLAGS)
+
+src/menu.o: src/menu.c
+	$(CC) -c src/menu.c -o src/menu.o $(CFLAGS)
+
+src/papan.o: src/papan.c
+	$(CC) -c src/papan.c -o src/papan.o $(CFLAGS)
+
+src/player.o: src/player.c
+	$(CC) -c src/player.c -o src/player.o $(CFLAGS)
+
+chess_move.o: chess_move.c
+	$(CC) -c chess_move.c -o chess_move.o $(CFLAGS)
+
+Gamestate.o: Gamestate.c
+	$(CC) -c Gamestate.c -o Gamestate.o $(CFLAGS)
+
+validator.o: validator.c
+	$(CC) -c validator.c -o validator.o $(CFLAGS)
+
+chessController.o: chessController.c
+	$(CC) -c chessController.c -o chessController.o $(CFLAGS)

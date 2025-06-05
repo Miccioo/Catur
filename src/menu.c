@@ -262,4 +262,8 @@ void settingsScreen(int termWidth) {
     waitForKeyPress();
 }
 
+void showNewGameOption(int termWidth) {
+	
+}
+
 

@@ -45,4 +45,5 @@ const char* getBidakVisualLine(TipeBidak tipe, int line_idx);
 // Fungsi untuk menampilkan representasi grafis bidak (individu)
 void tampilkanBidakVisual(TipeBidak tipe, WarnaBidak warna);
 
+
 #endif

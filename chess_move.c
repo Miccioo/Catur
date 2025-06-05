@@ -24,7 +24,7 @@ void pushMove(MoveStack* stack, Move move) {
         return;
     }
 
-    newNode->data = move;
+    newNode->move = move;
     newNode->next = stack->top;
     stack->top = newNode;
     stack->size++;
@@ -38,7 +38,7 @@ Move popMove(MoveStack* stack) {
     }
 
     MoveNode* temp = stack->top;
-    Move move = temp->data;
+    Move move = temp->move;
     
     stack->top = stack->top->next;
     free(temp);
@@ -54,7 +54,7 @@ Move peekMove(MoveStack* stack) {
         return emptyMove;
     }
     
-    return stack->top->data;
+    return stack->top->move;
 }
 
 bool isStackEmpty(MoveStack* stack) {
@@ -99,7 +99,7 @@ void addMove(MoveList* list, Move move) {
         return;
     }
 
-    newNode->data = move;
+    newNode->move = move;
     newNode->next = NULL;
 
     if (list->head == NULL) {
@@ -124,7 +124,7 @@ Move getMoveAt(MoveList* list, int index) {
         current = current->next;
     }
     
-    return current->data;
+    return current->move;
 }
 
 void clearList(MoveList* list) {
@@ -150,11 +150,11 @@ void destroyList(MoveList* list) {
 }
 
 // Implementasi function utilitas
-Move createMove(Position from, Position to, char piece) {
+Move createMove(Position from, Position to, TipeBidak piece) {
     Move move;
     move.from = from; 
     move.to = to;
-    move.piece = piece;
+    move.bidak = piece;
     move.captured = '\0';
     move.isCheck = false;
     move.isCheckmate = false;

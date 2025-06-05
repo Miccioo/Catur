@@ -2,8 +2,8 @@
 #define AI_ENGINE_H
 
 
-//#include "game_state.h"
-//#include "move.h"
+#include "Gamestate.h"
+#include "chess_move.h"
 #include "stdlib.h"
 #include "boolean.h"
 
@@ -29,8 +29,8 @@ typedef struct {
 
 boolean isEmptyTree(GameTree X);
 
-address createTree(/* GameState* rootState */int kedalamanMaks);
-address createNode(/* GameState* rootState , Move langkah, */int kedalamanMaks);
+address createTree(GameState* rootState, int kedalamanMaks);
+address createNode(GameState* state, Move langkah, address parent, int kedalaman);
 //Move getBestMove(Tree root);
 
 #endif
