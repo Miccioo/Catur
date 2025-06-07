@@ -2,6 +2,7 @@
 
 void startChess() {
 	int termWidth, termHeight;
+	Papan papan;
     getTerminalSize(&termWidth, &termHeight);
     
     while (1) {
@@ -9,7 +10,7 @@ void startChess() {
         
         switch (choice) {
             case MENU_NEW_GAME:
-                showNewGameOption(termWidth);
+                showNewGameOption(termWidth, papan);
                 break;
                 
             case MENU_LOAD_GAME:
@@ -32,6 +33,7 @@ void startChess() {
                 clearScreen();
                 printCentered("Thank you for playing!", termWidth, BOLD BRIGHT_MAGENTA);
                 printCentered("Goodbye!", termWidth, BOLD BRIGHT_CYAN);
+                return;
         }
     }
 }

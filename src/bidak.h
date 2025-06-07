@@ -1,6 +1,8 @@
 #ifndef BIDAK_H
 #define BIDAK_H
 
+#include "../color.h"
+
 // Enum untuk tipe bidak
 typedef enum {
     PION,
@@ -34,6 +36,9 @@ void initBidak(Bidak *bidak, TipeBidak tipe, WarnaBidak warna, int x, int y, int
 
 // Fungsi untuk menampilkan info bidak (debugging)
 void printBidak(Bidak bidak);
+
+// Fungsi Mencetak Bidak beserta warnanya
+void printBidakColor(Bidak b, int row_visual, int cell_x);
 
 // Fungsi baru: Mengembalikan string untuk satu baris visual bidak
 // Kita perlu mendefinisikan tinggi dan lebar visual di sini

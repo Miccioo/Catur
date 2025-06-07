@@ -1,6 +1,7 @@
 #include "bidak.h"
 #include <stdio.h>
 #include <string.h>
+#include "cJSON.h"
 
 void initBidak(Bidak *bidak, TipeBidak tipe, WarnaBidak warna, int x, int y, int id) {
     bidak->tipe = tipe;
@@ -22,6 +23,29 @@ void printBidak(Bidak bidak) {
            bidak.id, 
            bidak.hasMoved);
 }
+
+void printBidakColor(Bidak b, int row_visual, int cell_x) {
+    // Atur background berdasarkan petak
+    if (cell_x % 2 == 1) {
+        setRgbBackground(119, 146, 86); // petak gelap
+    } else {
+        setRgbBackground(235, 236, 208); // petak terang
+    }
+
+    // Atur warna foreground berdasarkan warna bidak
+    if (b.warna == HITAM) {
+        setRgbColor(34, 33, 31);
+    } else if (b.warna == PUTIH) {
+        setRgbColor(249, 249, 249);
+    }
+
+    // Cetak visual baris ke-row_visual
+    printf("%s", getBidakVisualLine(b.tipe, row_visual));
+
+    // Reset semua
+    printf(RESETCOLOR);
+}
+
 
 // Array string untuk setiap baris visual bidak
 // Tinggi semua bidak diseragamkan menjadi BIDAK_VISUAL_HEIGHT (15 baris)
@@ -65,7 +89,7 @@ const char* bidakVisualsArray[7][BIDAK_VISUAL_HEIGHT] = {
     {"                     ", // Padding 1
      "                     ", // Padding 2
      "                     ", // Padding 3
-     "      (\\=,)         ",
+     "     (\\=,)           ",
      "    //  .\\           ",
      "   (( \\_  \\          ",
      "    ))  `\\_)         ",
@@ -97,7 +121,6 @@ const char* bidakVisualsArray[7][BIDAK_VISUAL_HEIGHT] = {
     },
     // MENTERI (Disesuaikan ke 21 lebar)
     {"                     ", // Padding 1
-     "                     ", // Padding 2
      "       ()            ",
      "    .-:--:-.         ",
      "     \\____/          ",
@@ -111,11 +134,12 @@ const char* bidakVisualsArray[7][BIDAK_VISUAL_HEIGHT] = {
      "     /____\\          ",
      "    (======)         ",
      "    }======{         ",
-     "   (________)        " 
+     "   (________)        ", 
+     "                     "
     },
     // RAJA (Disesuaikan ke 21 lebar)
-    {"      _:_           ",
-     "     '-.-'          ",
+    {"      _:_            ",
+     "     '-.-'           ",
      "    __.'.__          ",
      "   |_______|         ",
      "    \\=====/          ",

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "papan.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -56,6 +57,6 @@ void aboutScreen(int termWidth);
 void settingsScreen(int termWidth);
 void waitForKeyPress();
 int getKeyPress();
-void showNewGameOption(int termWidth);
+void showNewGameOption(int termWidth, Papan papan);
 
 #endif

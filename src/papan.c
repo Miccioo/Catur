@@ -86,18 +86,13 @@ void printPapan(Papan papan) {
 
             for (x = 0; x < UKURAN_PAPAN; x++) {
                 Bidak b = papan.grid[y][x];
+				
+                printBidakColor(b, row_visual, x);
                 
-                if (b.warna == HITAM) {
-                    printf("\033[0;31m");  
-                } else if (b.warna == PUTIH) {
-                    printf("\033[0;37m");  
-                }
-                
-                printf("%s", getBidakVisualLine(b.tipe, row_visual));
-                
-                printf("\033[0m"); // Reset warna
                 printf("|");
+                printf(RESETCOLOR);
             }
+            
             if (row_visual == VISUAL_HEIGHT / 2) { 
                  printf(" %d\n", 8 - y); // Angka baris di tengah tinggi sel
             } else {

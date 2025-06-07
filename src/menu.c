@@ -244,16 +244,16 @@ void settingsScreen(int termWidth) {
     
     printf("\n");
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
-    printCentered("¦                                GAME SETTINGS                                  ¦", termWidth, BOLD BRIGHT_CYAN);
+    printCentered("¦                                GAME SETTINGS                                   ¦", termWidth, BOLD BRIGHT_CYAN);
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
     printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
     printCentered("¦  Settings options will be implemented in future versions.                      ¦", termWidth, BOLD WHITE);
     printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
-    printCentered("¦  Planned features:                                                            ¦", termWidth, BOLD BRIGHT_YELLOW);
-    printCentered("¦  - Board color customization                                                  ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Player name settings                                                       ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Difficulty level                                                           ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Game timer options                                                         ¦", termWidth, BOLD WHITE);
+    printCentered("¦  Planned features:                                                             ¦", termWidth, BOLD BRIGHT_YELLOW);
+    printCentered("¦  - Board color customization                                                   ¦", termWidth, BOLD WHITE);
+    printCentered("¦  - Player name settings                                                        ¦", termWidth, BOLD WHITE);
+    printCentered("¦  - Difficulty level                                                            ¦", termWidth, BOLD WHITE);
+    printCentered("¦  - Game timer options                                                          ¦", termWidth, BOLD WHITE);
     printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
     
@@ -262,8 +262,16 @@ void settingsScreen(int termWidth) {
     waitForKeyPress();
 }
 
-void showNewGameOption(int termWidth) {
-	
+void showNewGameOption(int termWidth, Papan papan) {
+	// Mengurangi ukuran font (tidak bekerja di semua terminal)
+    printf("\033]50;%s\007", "6x12");  // Mencoba set font lebih kecil
+    
+    // Alternatif: resize window terminal (untuk terminal yang mendukung)
+    printf("\033[8;40;120t");  // Set 40 baris, 120 kolom
+	initPapan(&papan);
+	printPapan(papan);
+	getchar();
+	getchar();
 }
 
 

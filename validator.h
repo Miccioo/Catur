@@ -9,13 +9,13 @@
 
 #define MAX_MOVES 256
 
-// Function to check if path between two positions is clear
+// Fungsi untuk mengecek jika jalan antara 2 posisi clear (tidak ada bidak)
 boolean isPathClear(Papan papan, Position from, Position to);
 
-// Function to validate if a move is legal
+// Fungsi untuk memvalidasi gerakan bidak
 boolean isValidMove(Papan papan, Move* move, Player* currentPlayer);
 
-// Function to generate all valid moves for current player
+// Fungsi untuk generate semua gerakan valid untuk player saat ini
 Move* generateAllValidMoves(Papan papan, Player* currentPlayer);
 
 #endif

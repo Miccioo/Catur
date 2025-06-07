@@ -1,6 +1,7 @@
 #include "validator.h"
 #include <stdlib.h>
 #include <math.h>
+#define MAX_MOVES 256
 
 boolean isPathClear(Papan papan, Position from, Position to) {
     int dx = (to.col - from.col) == 0 ? 0 : (to.col - from.col) / abs(to.col - from.col);
@@ -67,7 +68,6 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
     return false;
 }
 
-#define MAX_MOVES 256
 
 Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
     Move* moves = (Move*)malloc(sizeof(Move) * MAX_MOVES);
