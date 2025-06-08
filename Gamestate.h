@@ -3,6 +3,7 @@
 
 #include "src/papan.h"
 #include "src/player.h"
+#include "src/menu.h"
 #include "chess_move.h"
 #include "boolean.h"
 

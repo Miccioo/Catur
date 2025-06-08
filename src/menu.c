@@ -162,10 +162,10 @@ void displayBanner() {
     
     printf("\n");
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
-    printCentered("¦  ?? ? ?  WELCOME TO THE ULTIMATE CHESS EXPERIENCE  ? ? ??                    ¦", termWidth, BOLD BRIGHT_GREEN);
-    printCentered("¦--------------------------------------------------------------------------------¦", termWidth, BOLD BRIGHT_MAGENTA);
-    printCentered("¦  ? Test Your Strategic Mind Against the Best! ?                              ¦", termWidth, BOLD BRIGHT_YELLOW);
-    printCentered("¦  ?? Every Move Counts - Make Yours Legendary! ??                            ¦", termWidth, BOLD BRIGHT_CYAN);
+    printCentered("ï¿½  ?? ? ?  WELCOME TO THE ULTIMATE CHESS EXPERIENCE  ? ? ??                    ï¿½", termWidth, BOLD BRIGHT_GREEN);
+    printCentered("ï¿½--------------------------------------------------------------------------------ï¿½", termWidth, BOLD BRIGHT_MAGENTA);
+    printCentered("ï¿½  ? Test Your Strategic Mind Against the Best! ?                              ï¿½", termWidth, BOLD BRIGHT_YELLOW);
+    printCentered("ï¿½  ?? Every Move Counts - Make Yours Legendary! ??                            ï¿½", termWidth, BOLD BRIGHT_CYAN);
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
 }
 
@@ -211,26 +211,108 @@ int showMainMenu(int termWidth) {
     }
 }
 
+int showNewGameOption(int termWidth) {
+	const char *options[] = {
+        "CLASSIC CHESS",
+        "EVOLVE CHESS",
+        "ZOMBIE CHESS",
+        "BACK"
+    };
+    
+    int selected = 0;
+    int i;
+    
+    while (1) {
+        clearScreen();
+        displayBanner();
+        
+        printf("\n\n");
+        for (i = 0; i < GAME_COUNT; i++) {
+            if (i == selected) {
+                char menuItem[50];
+                sprintf(menuItem, "> %s <", options[i]);
+                printCentered(menuItem, termWidth, BOLD BRIGHT_GREEN);
+            } else {
+                printCentered(options[i], termWidth, BOLD WHITE);
+            }
+        }
+        
+        printf("\n");
+        printCentered("Use arrow keys to navigate, ENTER to select", termWidth, BOLD BRIGHT_YELLOW);
+        
+        int key = getKeyPress();
+        
+        switch (key) {
+            case 'U': selected = (selected - 1 + GAME_COUNT) % GAME_COUNT; break;
+            case 'D': selected = (selected + 1) % GAME_COUNT; break;
+            case '\r':
+            case '\n': return selected;
+            case 27: return GAME_BACK;
+        }
+    }
+}
+
+int showVersusOption(int termWidth) {
+	const char *options[] = {
+        "PLAYER VS PLAYER",
+        "PLAYER VS AI",
+        "AI VS AI",
+        "BACK"
+    };
+    
+    int selected = 0;
+    int i;
+    
+    while (1) {
+        clearScreen();
+        displayBanner();
+        
+        printf("\n\n");
+        for (i = 0; i < VERSUS_COUNT; i++) {
+            if (i == selected) {
+                char menuItem[50];
+                sprintf(menuItem, "> %s <", options[i]);
+                printCentered(menuItem, termWidth, BOLD BRIGHT_GREEN);
+            } else {
+                printCentered(options[i], termWidth, BOLD WHITE);
+            }
+        }
+        
+        printf("\n");
+        printCentered("Use arrow keys to navigate, ENTER to select", termWidth, BOLD BRIGHT_YELLOW);
+        
+        int key = getKeyPress();
+        
+        switch (key) {
+            case 'U': selected = (selected - 1 + VERSUS_COUNT) % VERSUS_COUNT; break;
+            case 'D': selected = (selected + 1) % VERSUS_COUNT; break;
+            case '\r':
+            case '\n': return selected;
+            case 27: return VERSUS_BACK;
+        }
+    }
+}
+
 void aboutScreen(int termWidth) {
     clearScreen();
     displayBanner();
     
     printf("\n");
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
-    printCentered("¦                                ABOUT CHESS GAME                               ¦", termWidth, BOLD BRIGHT_CYAN);
+    printCentered("ï¿½                                ABOUT CHESS GAME                               ï¿½", termWidth, BOLD BRIGHT_CYAN);
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
-    printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
-    printCentered("¦  This chess game was developed as a passion project by chess enthusiasts.      ¦", termWidth, BOLD WHITE);
-    printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
-    printCentered("¦  Features:                                                                     ¦", termWidth, BOLD BRIGHT_YELLOW);
-    printCentered("¦  - Classic chess rules implementation                                          ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Save/Load game functionality                                               ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Beautiful ASCII interface                                                  ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Customizable settings                                                       ¦", termWidth, BOLD WHITE);
-    printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
-    printCentered("¦  Version: 1.0                                                                 ¦", termWidth, BOLD BRIGHT_GREEN);
-    printCentered("¦  Release Date: June 2024                                                      ¦", termWidth, BOLD BRIGHT_GREEN);
-    printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
+    printCentered("ï¿½                                                                                ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  This chess game was developed as a passion project by chess enthusiasts.      ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½                                                                                ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  Features:                                                                     ï¿½", termWidth, BOLD BRIGHT_YELLOW);
+    printCentered("ï¿½  - Classic chess rules implementation                                          ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  - Save/Load game functionality                                               ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  - Beautiful ASCII interface                                                  ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  - Customizable settings                                                       ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½                                                                                ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  Version: 1.0                                                                 ï¿½", termWidth, BOLD BRIGHT_GREEN);
+    printCentered("ï¿½  Release Date: June 2024                                                      ï¿½", termWidth, BOLD BRIGHT_GREEN);
+    printCentered("ï¿½                                                                                ï¿½", termWidth, BOLD WHITE);
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
     
     printf("\n");
@@ -244,17 +326,17 @@ void settingsScreen(int termWidth) {
     
     printf("\n");
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
-    printCentered("¦                                GAME SETTINGS                                   ¦", termWidth, BOLD BRIGHT_CYAN);
+    printCentered("ï¿½                                GAME SETTINGS                                   ï¿½", termWidth, BOLD BRIGHT_CYAN);
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
-    printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
-    printCentered("¦  Settings options will be implemented in future versions.                      ¦", termWidth, BOLD WHITE);
-    printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
-    printCentered("¦  Planned features:                                                             ¦", termWidth, BOLD BRIGHT_YELLOW);
-    printCentered("¦  - Board color customization                                                   ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Player name settings                                                        ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Difficulty level                                                            ¦", termWidth, BOLD WHITE);
-    printCentered("¦  - Game timer options                                                          ¦", termWidth, BOLD WHITE);
-    printCentered("¦                                                                                ¦", termWidth, BOLD WHITE);
+    printCentered("ï¿½                                                                                ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  Settings options will be implemented in future versions.                      ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½                                                                                ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  Planned features:                                                             ï¿½", termWidth, BOLD BRIGHT_YELLOW);
+    printCentered("ï¿½  - Board color customization                                                   ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  - Player name settings                                                        ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  - Difficulty level                                                            ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½  - Game timer options                                                          ï¿½", termWidth, BOLD WHITE);
+    printCentered("ï¿½                                                                                ï¿½", termWidth, BOLD WHITE);
     printCentered("+--------------------------------------------------------------------------------+", termWidth, BOLD BRIGHT_MAGENTA);
     
     printf("\n");
@@ -262,16 +344,6 @@ void settingsScreen(int termWidth) {
     waitForKeyPress();
 }
 
-void showNewGameOption(int termWidth, Papan papan) {
-	// Mengurangi ukuran font (tidak bekerja di semua terminal)
-    printf("\033]50;%s\007", "6x12");  // Mencoba set font lebih kecil
-    
-    // Alternatif: resize window terminal (untuk terminal yang mendukung)
-    printf("\033[8;40;120t");  // Set 40 baris, 120 kolom
-	initPapan(&papan);
-	printPapan(papan);
-	getchar();
-	getchar();
-}
+
 
 

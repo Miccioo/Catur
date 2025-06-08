@@ -76,9 +76,6 @@ boolean isGameOver(GameState* state) {
     // Cek remis
     if (state->remis) return true;
     
-    // Cek pat (tidak ada langkah legal)
-    // TODO: Implementasi cek pat
-    
     return false;
 }
 
@@ -107,11 +104,11 @@ void applyMove(GameState* state, Move* move) {
     newNode->move = *move;
     newNode->next = state->history;
     state->history = newNode;
-    
+
     // Ambil bidak yang akan dipindahkan
     Bidak piece = getBidakAt(state->papan, move->from.col, move->from.row);
     if (piece.id == -1) return;
-    
+
     // Simpan bidak yang mungkin dimakan
     Bidak captured = getBidakAt(state->papan, move->to.col, move->to.row);
     move->captured = (captured.id != -1) ? captured.tipe : '\0';
@@ -129,9 +126,6 @@ void applyMove(GameState* state, Move* move) {
     } else {
         state->langkahTanpaGerak++;
     }
-    
-    // Cek skak
-    // TODO: Implementasi cek skak
     
     // Tukar giliran
     switchTurn(state);

@@ -16,35 +16,35 @@ void initPapan(Papan *papan) {
     // Inisialisasi bidak putih
     int idCounter = 0; 
     
-    // Baris 0 (indeks 0): Benteng, Kuda, Gajah, Menteri, Raja, Gajah, Kuda, Benteng (Putih)
-    initBidak(&(papan->grid[0][0]), BENTENG, PUTIH, 0, 0, idCounter++);
-    initBidak(&(papan->grid[0][1]), KUDA, PUTIH, 1, 0, idCounter++);
-    initBidak(&(papan->grid[0][2]), GAJAH, PUTIH, 2, 0, idCounter++);
-    initBidak(&(papan->grid[0][3]), MENTERI, PUTIH, 3, 0, idCounter++);
-    initBidak(&(papan->grid[0][4]), RAJA, PUTIH, 4, 0, idCounter++);
-    initBidak(&(papan->grid[0][5]), GAJAH, PUTIH, 5, 0, idCounter++);
-    initBidak(&(papan->grid[0][6]), KUDA, PUTIH, 6, 0, idCounter++);
-    initBidak(&(papan->grid[0][7]), BENTENG, PUTIH, 7, 0, idCounter++);
+    // Baris 0 (indeks 0): Benteng, Kuda, Gajah, Menteri, Raja, Gajah, Kuda, Benteng (Hitam)
+    initBidak(&(papan->grid[0][0]), BENTENG, HITAM, 0, 0, idCounter++);
+    initBidak(&(papan->grid[0][1]), KUDA, HITAM, 1, 0, idCounter++);
+    initBidak(&(papan->grid[0][2]), GAJAH, HITAM, 2, 0, idCounter++);
+    initBidak(&(papan->grid[0][3]), MENTERI, HITAM, 3, 0, idCounter++);
+    initBidak(&(papan->grid[0][4]), RAJA, HITAM, 4, 0, idCounter++);
+    initBidak(&(papan->grid[0][5]), GAJAH, HITAM, 5, 0, idCounter++);
+    initBidak(&(papan->grid[0][6]), KUDA, HITAM, 6, 0, idCounter++);
+    initBidak(&(papan->grid[0][7]), BENTENG, HITAM, 7, 0, idCounter++);
     
-    // Baris 1 (indeks 1): Pion Putih
+    // Baris 1 (indeks 1): Pion Hitam
     for (x = 0; x < UKURAN_PAPAN; x++) {
-        initBidak(&(papan->grid[1][x]), PION, PUTIH, x, 1, idCounter++);
+        initBidak(&(papan->grid[1][x]), PION, HITAM, x, 1, idCounter++);
     }
     
     // Inisialisasi bidak hitam
-    // Baris 7 (indeks 7): Benteng, Kuda, Gajah, Menteri, Raja, Gajah, Kuda, Benteng (Hitam)
-    initBidak(&(papan->grid[7][0]), BENTENG, HITAM, 0, 7, idCounter++);
-    initBidak(&(papan->grid[7][1]), KUDA, HITAM, 1, 7, idCounter++);
-    initBidak(&(papan->grid[7][2]), GAJAH, HITAM, 2, 7, idCounter++);
-    initBidak(&(papan->grid[7][3]), MENTERI, HITAM, 3, 7, idCounter++);
-    initBidak(&(papan->grid[7][4]), RAJA, HITAM, 4, 7, idCounter++);
-    initBidak(&(papan->grid[7][5]), GAJAH, HITAM, 5, 7, idCounter++);
-    initBidak(&(papan->grid[7][6]), KUDA, HITAM, 6, 7, idCounter++);
-    initBidak(&(papan->grid[7][7]), BENTENG, HITAM, 7, 7, idCounter++);
+    // Baris 7 (indeks 7): Benteng, Kuda, Gajah, Menteri, Raja, Gajah, Kuda, Benteng (Putih)
+    initBidak(&(papan->grid[7][0]), BENTENG, PUTIH, 0, 7, idCounter++);
+    initBidak(&(papan->grid[7][1]), KUDA, PUTIH, 1, 7, idCounter++);
+    initBidak(&(papan->grid[7][2]), GAJAH, PUTIH, 2, 7, idCounter++);
+    initBidak(&(papan->grid[7][3]), MENTERI, PUTIH, 3, 7, idCounter++);
+    initBidak(&(papan->grid[7][4]), RAJA, PUTIH, 4, 7, idCounter++);
+    initBidak(&(papan->grid[7][5]), GAJAH, PUTIH, 5, 7, idCounter++);
+    initBidak(&(papan->grid[7][6]), KUDA, PUTIH, 6, 7, idCounter++);
+    initBidak(&(papan->grid[7][7]), BENTENG, PUTIH, 7, 7, idCounter++);
     
-    // Baris 6 (indeks 6): Pion Hitam
+    // Baris 6 (indeks 6): Pion Putih
     for (x = 0; x < UKURAN_PAPAN; x++) {
-        initBidak(&(papan->grid[6][x]), PION, HITAM, x, 6, idCounter++);
+        initBidak(&(papan->grid[6][x]), PION, PUTIH, x, 6, idCounter++);
     }
 }
 

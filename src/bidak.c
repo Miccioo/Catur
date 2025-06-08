@@ -1,7 +1,6 @@
 #include "bidak.h"
 #include <stdio.h>
 #include <string.h>
-#include "cJSON.h"
 
 void initBidak(Bidak *bidak, TipeBidak tipe, WarnaBidak warna, int x, int y, int id) {
     bidak->tipe = tipe;
@@ -51,6 +50,7 @@ void printBidakColor(Bidak b, int row_visual, int cell_x) {
 // Tinggi semua bidak diseragamkan menjadi BIDAK_VISUAL_HEIGHT (15 baris)
 // Lebar semua bidak diseragamkan menjadi BIDAK_VISUAL_WIDTH (21 karakter)
 const char* bidakVisualsArray[7][BIDAK_VISUAL_HEIGHT] = {
+	
     // PION (Disesuaikan ke 21 lebar)
     {"                     ", // Padding 1
      "                     ", // Padding 2

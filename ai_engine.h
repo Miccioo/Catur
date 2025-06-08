@@ -1,7 +1,6 @@
 #ifndef AI_ENGINE_H
 #define AI_ENGINE_H
 
-
 #include "Gamestate.h"
 #include "chess_move.h"
 #include "stdlib.h"
@@ -28,7 +27,6 @@ typedef struct {
 } GameTree;
 
 boolean isEmptyTree(GameTree X);
-
 address createTree(GameState* rootState, int kedalamanMaks);
 address createNode(GameState* state, Move langkah, address parent, int kedalaman);
 //Move getBestMove(Tree root);

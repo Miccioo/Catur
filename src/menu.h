@@ -46,6 +46,23 @@ typedef enum {
     MENU_COUNT
 } MenuOption;
 
+// Game options
+typedef enum {
+	GAME_CLASSIC_CHESS,
+	GAME_EVOLVE_CHESS,
+	GAME_ZOMBIE_CHESS,
+	GAME_BACK,
+	GAME_COUNT
+} GameType;
+
+typedef enum {
+	PLAYER_VS_PLAYER,
+	PLAYER_VS_AI,
+	AI_VS_AI,
+	VERSUS_BACK,
+	VERSUS_COUNT
+} VersusOption;
+
 // Function prototypes
 void clearScreen();
 void getTerminalSize(int *width, int *height);
@@ -53,10 +70,11 @@ void moveCursor(int x, int y);
 void printCentered(const char* text, int termWidth, const char* color);
 void displayBanner();
 int showMainMenu(int termWidth);
+int showNewGameOption(int termWidth);
+int showVersusOption(int termWidth);
 void aboutScreen(int termWidth);
 void settingsScreen(int termWidth);
 void waitForKeyPress();
 int getKeyPress();
-void showNewGameOption(int termWidth, Papan papan);
 
 #endif
