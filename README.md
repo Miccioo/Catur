@@ -1,4 +1,4 @@
-# ♟️ ChessGame: Melampaui Papan Catur
+# ♟️ ChessGame: Beyond the Board
 
 Selamat datang di **ChessGame**, tempat game catur klasik mendapatkan sentuhan revolusioner! Dikembangkan oleh tim beranggotakan tiga orang yang penuh semangat, proyek ini mendefinisikan ulang game strategi abadi dengan tiga mode yang berbeda dan mendebarkan. Bersiaplah untuk menantang pemikiran taktis Anda dengan cara yang tidak pernah Anda bayangkan!
 
