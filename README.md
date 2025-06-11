@@ -2,6 +2,8 @@
 
 Selamat datang di **ChessGame**, tempat game catur klasik mendapatkan sentuhan revolusioner! Dikembangkan oleh tim beranggotakan tiga orang yang penuh semangat, proyek ini mendefinisikan ulang game strategi abadi dengan tiga mode yang berbeda dan mendebarkan. Bersiaplah untuk menantang pemikiran taktis Anda dengan cara yang tidak pernah Anda bayangkan!
 
+Proyek ini dibuat khusus untuk memenuhi tugas mata kuliah Struktur Data dan Algoritma. Kami berupaya menerapkan konsep-konsep yang telah dipelajari dalam pengembangan fitur-fitur unik ini.
+
 ---
 
 ## 🚀 Fitur
