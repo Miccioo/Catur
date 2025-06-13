@@ -59,12 +59,12 @@ GameTree* createGameTree(GameState* rootState, int kedalamanMaks, boolean isMaxi
     return tree;
 }
 
-int minimax(address node, int depth, boolean maximizingPlayer) {
+int minimax(address node, int depth, boolean isMaximizingPlayer) {
     if (depth == 0 || node->jumlahAnak == 0) {
         return evaluateState(&node->state);
     }
 
-    if (maximizingPlayer) {
+    if (isMaximizingPlayer) {
         int maxEval = INT_MIN;
         int i;
         for (i = 0; i < node->jumlahAnak; i++) {
@@ -101,3 +101,5 @@ Move getBestMove(GameTree* tree) {
 
     return bestMove;
 }
+
+

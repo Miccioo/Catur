@@ -5,9 +5,6 @@
 
 void startChess();
 
-// Fungsi terpisah untuk mode versus
-VersusOption handleVersusMode(int termWidth);
-
 // Fungsi terpisah untuk tipe game
 void handleGameType(int termWidth, GameType type);
 
@@ -15,9 +12,9 @@ void classicChess(GameType type, VersusOption mode);
 void evolveChess(GameType type, VersusOption mode);
 void zombieChess(GameType type, VersusOption mode);
 
-void modePVP(VersusOption mode);
-void modePVE(VersusOption mode);
-void modeEVSE(VersusOption mode);
+GameState modePVP();
+GameState modePVE();
+GameState modeEVSE();
 
 //void showNewGameOption(int termWidth, Papan papan);
 #endif

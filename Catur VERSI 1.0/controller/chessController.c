@@ -10,29 +10,6 @@
 #include <string.h> // For strcpy
 #include <stdlib.h> // For free
 
-// Assuming these are defined in chessController.h or another included utility header
-extern void getTerminalSize(int* width, int* height);
-extern int showMainMenu(int termWidth);
-extern GameType showNewGameOption(int termWidth);
-extern void clearScreen();
-extern void printCentered(const char* text, int termWidth, const char* color);
-extern void waitForKeyPress();
-extern void settingsScreen(int termWidth);
-extern void aboutScreen(int termWidth);
-extern VersusOption showVersusOption(int termWidth);
-extern void printPapan(Papan papan); // From papan.h
-
-// Forward declarations if not in chessController.h
-VersusOption handleVersusMode(int termWidth);
-void handleGameType(int termWidth, GameType type);
-void classicChess(GameType type, VersusOption mode);
-void evolveChess(GameType type, VersusOption mode);
-void zombieChess(GameType type, VersusOption mode);
-void modePVP(VersusOption mode);
-void modePVE(VersusOption mode);
-void modeEVSE(VersusOption mode);
-
-
 void startChess() {
     int termWidth, termHeight;
     // Papan papan; // papan is not used directly here, only in helper functions.
@@ -73,29 +50,10 @@ void startChess() {
     }
 }
 
-VersusOption handleVersusMode(int termWidth) {
-    VersusOption choice = showVersusOption(termWidth);
-
-    switch (choice) {
-        case PLAYER_VS_PLAYER:
-            modePVP(choice);
-            break;
-        case PLAYER_VS_AI:
-            modePVE(choice);
-            break;
-        case AI_VS_AI:
-            modeEVSE(choice);
-            break;
-        case VERSUS_BACK:
-            break;
-    }
-    return choice;
-}
-
 void handleGameType(int termWidth, GameType type) {
     if (type == GAME_BACK) return;
 
-    VersusOption versusChoice = handleVersusMode(termWidth);
+    VersusOption versusChoice = showVersusOption(termWidth);
     if (versusChoice == VERSUS_BACK) return;
 
     switch (type) {
@@ -120,10 +78,6 @@ void classicChess(GameType type, VersusOption mode) {
     Player putih, hitam;
     int termWidth, termHeight;
     getTerminalSize(&termWidth, &termHeight);
-
-    initPlayer(&putih, "Player 1", PUTIH);
-    initPlayer(&hitam, (mode == PLAYER_VS_PLAYER) ? "Player 2" : "Computer", HITAM);
-    initGameState(&state, &putih, &hitam);
 
     // Main game loop
     while (!isGameOver(&state)) {
@@ -153,7 +107,7 @@ void classicChess(GameType type, VersusOption mode) {
 
             // Parse move
             Position from, to;
-            if (sscanf(input, "%c%d %c%d",
+            if (sscanf(input, "%c%c %c%c",
                        &from.col, &from.row,
                        &to.col, &to.row) == 4) {
                 // Convert to 0-based indices
@@ -183,10 +137,6 @@ void classicChess(GameType type, VersusOption mode) {
             printCentered("AI is thinking...", termWidth, BOLD BRIGHT_CYAN);
 
             // Create game tree for AI
-            // The warning about 'cast to pointer from integer of different size' indicates
-            // that 'createGameTree' is still not properly prototyped to return 'GameTree*'.
-            // Ensure '../ai/ai_engine.h' has 'GameTree* createGameTree(...);' declared.
-            // Keeping the cast for now, but the ideal fix is the header.
             GameTree* tree = (GameTree*)createGameTree(&state, 3, (state.giliran->warna == PUTIH)); //
 
             if (tree != NULL) {
@@ -194,14 +144,10 @@ void classicChess(GameType type, VersusOption mode) {
                 minimax(tree->root, tree->maxKedalaman, tree->isMaximizingPlayer); //
 
                 // Get best move and apply it
-                // The error 'invalid initializer' here means 'getBestMove' is not prototyped
-                // to return a 'Move' struct. Ensure '../ai/ai_engine.h' has
-                // 'Move getBestMove(GameTree* tree);' declared.
                 Move bestMove = getBestMove(tree); //
                 applyMove(&state, &bestMove); //
 
                 // Free memory
-                // Ensure free(tree) is safe and tree was allocated by malloc or similar
                 free(tree); //
             } else {
                 printCentered("Failed to create AI game tree!", termWidth, BOLD BRIGHT_RED);
@@ -250,95 +196,39 @@ void zombieChess(GameType type, VersusOption mode) {
     waitForKeyPress();
 }
 
-void modePVP(VersusOption mode) {
-    // Player vs Player mode specific initialization
-    // Handled in classicChess function
-}
-
-void modePVE(VersusOption mode) {
-    // Player vs AI mode specific initialization
-    // Handled in classicChess function
-}
-
-void modeEVSE(VersusOption mode) {
-    // AI vs AI mode specific initialization
+GameState modeVersus() {
+	
     GameState state;
     Player putih, hitam;
-    int termWidth, termHeight;
-    getTerminalSize(&termWidth, &termHeight);
+
+    initPlayer(&putih, "Player 1", PUTIH);
+    initPlayer(&hitam, "Player 2", HITAM);
+    initGameState(&state, &putih, &hitam);
+    
+    return state;
+}
+
+GameState modePVE() {
+	
+    GameState state;
+    Player putih, hitam;
+
+    initPlayer(&putih, "Player 1", PUTIH);
+    initPlayer(&hitam, "Computer 2", HITAM);
+    initGameState(&state, &putih, &hitam);
+    
+    return state;
+}
+
+GameState modeEVSE() {
+	
+	GameState state;
+    Player putih, hitam;
 
     initPlayer(&putih, "Computer 1", PUTIH);
     initPlayer(&hitam, "Computer 2", HITAM);
     initGameState(&state, &putih, &hitam);
+    
+    return state;
 
-    // Main game loop
-    while (!isGameOver(&state)) {
-        clearScreen();
-        printPapan(state.papan);
-
-        // Print current AI turn
-        char turnMsg[50];
-        sprintf(turnMsg, "%s's turn (%s)",
-                state.giliran->nama,
-                (state.giliran->warna == PUTIH) ? "White" : "Black");
-        printCentered(turnMsg, termWidth, BOLD BRIGHT_YELLOW);
-
-        printCentered("AI is thinking...", termWidth, BOLD BRIGHT_CYAN);
-
-        // Create game tree for AI
-        // Same issue as in classicChess. Ensure '../ai/ai_engine.h' has
-        // 'GameTree* createGameTree(...);' declared.
-        GameTree* tree = (GameTree*)createGameTree(&state, 3, (state.giliran->warna == PUTIH)); //
-
-        if (tree != NULL) {
-            // Run minimax algorithm
-            minimax(tree->root, tree->maxKedalaman, tree->isMaximizingPlayer); //
-
-            // Get best move and apply it
-            // Same issue as in classicChess. Ensure '../ai/ai_engine.h' has
-            // 'Move getBestMove(GameTree* tree);' declared.
-            Move bestMove = getBestMove(tree); //
-            applyMove(&state, &bestMove); //
-
-            // Free memory
-            free(tree); //
-        } else {
-            printCentered("Failed to create AI game tree!", termWidth, BOLD BRIGHT_RED);
-            waitForKeyPress();
-        }
-
-        waitForKeyPress();
-    }
-
-    // Game over
-    clearScreen();
-    printPapan(state.papan);
-
-    char resultMsg[50];
-    if (state.skakmat) {
-        sprintf(resultMsg, "Checkmate! %s wins!",
-                (state.giliran->warna == PUTIH) ? hitam.nama : putih.nama);
-    } else {
-        strcpy(resultMsg, "Game ended in a draw!");
-    }
-
-    printCentered(resultMsg, termWidth, BOLD BRIGHT_GREEN);
-    waitForKeyPress();
 }
-
-//void showNewGameOption(int termWidth, Papan papan) {
-//	// Mengurangi ukuran font (tidak bekerja di semua terminal)
-//    printf("\033]50;%s\007", "6x12");  // Mencoba set font lebih kecil
-//
-//    // Alternatif: resize window terminal (untuk terminal yang mendukung)
-//    printf("\033[8;40;120t");  // Set 40 baris, 120 kolom
-//	initPapan(&papan);
-//	printPapan(papan);
-//	Bidak X = getBidakAt(papan, 1, 1);
-//	setBidakAt(&papan, X, 3, 3);
-//	Bidak kosong;
-//	initBidak(&kosong, TIDAK_ADA, TANPA_WARNA, 0, 1, -1);
-//	printPapan(papan);
-//	getchar();
-//	getchar();
-//}

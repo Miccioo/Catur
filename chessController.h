@@ -11,6 +11,8 @@ VersusOption handleVersusMode(int termWidth);
 // Fungsi terpisah untuk tipe game
 void handleGameType(int termWidth, GameType type);
 
+void 
+
 void classicChess(GameType type, VersusOption mode);
 void evolveChess(GameType type, VersusOption mode);
 void zombieChess(GameType type, VersusOption mode);
