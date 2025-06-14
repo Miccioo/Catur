@@ -2,6 +2,8 @@
 #define PAPAN_H
 
 #include "bidak.h"
+#include "../core/chess_move.h"
+#include "windows.h"
 
 #define UKURAN_PAPAN 8
 
@@ -23,6 +25,9 @@ Bidak getBidakAt(Papan papan, int x, int y);
 void setBidakAt(Papan *papan, Bidak bidak, int x, int y);
 
 // Fungsi untuk memindahkan bidak
-void pindahkanBidak(Papan *papan, int xAwal, int yAwal, int xTujuan, int yTujuan);
+void pindahkanBidak(Papan *papan, Move* move);
+
+// Fungsi untuk mengecek apakah ada bidak di posisi tertentu
+boolean isEmptyBidak(Papan* papan, int x, int y);
 
 #endif

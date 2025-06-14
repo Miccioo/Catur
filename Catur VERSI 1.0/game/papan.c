@@ -137,7 +137,12 @@ void setBidakAt(Papan *papan, Bidak bidak, int x, int y) {
     }
 }
 
-void pindahkanBidak(Papan *papan, int xAwal, int yAwal, int xTujuan, int yTujuan) {
+void pindahkanBidak(Papan *papan, Move* move) {
+	int xAwal = move->from.col;
+	int yAwal = move->from.row;
+	int xTujuan = move->to.col;
+	int yTujuan = move->to.row;
+	
     if (xAwal >= 0 && xAwal < UKURAN_PAPAN && yAwal >= 0 && yAwal < UKURAN_PAPAN &&
         xTujuan >= 0 && xTujuan < UKURAN_PAPAN && yTujuan >= 0 && yTujuan < UKURAN_PAPAN) {
         
@@ -147,10 +152,14 @@ void pindahkanBidak(Papan *papan, int xAwal, int yAwal, int xTujuan, int yTujuan
         // Kosongkan posisi awal
         Bidak kosong;
         initBidak(&kosong, TIDAK_ADA, TANPA_WARNA, xAwal, yAwal, -1);
-        // Perbaiki typo di baris ini: xAawal menjadi xAwal
-        papan->grid[yAwal][xAwal] = kosong; 
-        
+
+        papan->grid[yAwal][xAwal] = kosong;
+
         // Pindahkan ke posisi tujuan
         setBidakAt(papan, bidak, xTujuan, yTujuan);
     }
+}
+
+boolean isEmptyBidak(Papan* papan, int x, int y) {
+	return papan->grid[x][y].tipe == TIDAK_ADA;
 }

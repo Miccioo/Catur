@@ -151,15 +151,13 @@ void destroyList(MoveList* list) {
 }
 
 // Implementasi function utilitas
-Move createMove(Position from, Position to, TipeBidak piece) {
-    Move move;
-    move.from = from; 
-    move.to = to;
-    move.bidak = piece;
-    move.captured = '\0';
-    move.isCheck = false;
-    move.isCheckmate = false;
-    return move;
+void createMove(Move* move, Position from, Position to, TipeBidak piece) {
+    move->from = from; 
+    move->to = to;
+    move->bidak = piece;
+    move->captured = '\0';
+    move->isCheck = false;
+    move->isCheckmate = false;
 }
 
 void printMove(Move move) {

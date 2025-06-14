@@ -14,7 +14,7 @@ void zombieChess(GameType type, VersusOption mode);
 
 GameState modePVP();
 GameState modePVE();
-GameState modeEVSE();
+GameState modeEVE();
 
 //void showNewGameOption(int termWidth, Papan papan);
 #endif

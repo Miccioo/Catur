@@ -14,7 +14,7 @@ typedef struct {
 } Player;
 
 // Fungsi untuk inisialisasi player
-void initPlayer(Player *player, const char *nama, WarnaBidak warna);
+void initPlayer(Player *player, char nama[MAX_NAMA], WarnaBidak warna);
 
 // Fungsi untuk menampilkan info player
 void printPlayer(Player player);

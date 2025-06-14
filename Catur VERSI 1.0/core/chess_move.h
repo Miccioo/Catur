@@ -55,7 +55,7 @@ void clearList(MoveList* list);
 void destroyList(MoveList* list);
 
 // Function untuk utilitas
-Move createMove(Position from, Position to, TipeBidak piece);
+void createMove(Move *move, Position from, Position to, TipeBidak piece);
 void printMove(Move move);
 bool isValidPosition(Position pos);
 

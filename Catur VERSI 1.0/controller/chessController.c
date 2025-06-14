@@ -77,13 +77,36 @@ void classicChess(GameType type, VersusOption mode) {
     GameState state;
     Player putih, hitam;
     int termWidth, termHeight;
+    char from_col, from_row, to_col, to_row;
     getTerminalSize(&termWidth, &termHeight);
+    
+    switch (mode) {
+    	case PLAYER_VS_PLAYER:
+    		state = modePVP();
+    		break;
+    		
+    	case PLAYER_VS_AI:
+    		state = modePVE();
+    		break;
+    		
+    	case AI_VS_AI:
+    		state = modeEVE();
+    		break;
+    	
+    	default:
+        // Handle invalid mode
+        fprintf(stderr, "Invalid game mode\n");
+        return;
+	}
 
     // Main game loop
     while (!isGameOver(&state)) {
         clearScreen();
         printPapan(state.papan);
 
+		// Debugging
+		printf("%c %d", mode, mode);
+		
         // Print current player turn
         char turnMsg[50];
         sprintf(turnMsg, "%s's turn (%s)",
@@ -92,7 +115,7 @@ void classicChess(GameType type, VersusOption mode) {
         printCentered(turnMsg, termWidth, BOLD BRIGHT_YELLOW);
 
         if ((mode == PLAYER_VS_PLAYER) ||
-            (mode == PLAYER_VS_AI && state.giliran->warna == PUTIH)) {
+            (mode == PLAYER_VS_AI )) {
             // Player's turn
             printCentered("Enter your move (e.g. e2 e4): ", termWidth, BOLD WHITE);
 
@@ -102,32 +125,38 @@ void classicChess(GameType type, VersusOption mode) {
                 // Handle EOF or error
                 return;
             }
+
             // Remove trailing newline if present
             input[strcspn(input, "\n")] = 0;
 
             // Parse move
             Position from, to;
             if (sscanf(input, "%c%c %c%c",
-                       &from.col, &from.row,
-                       &to.col, &to.row) == 4) {
+                       &from_col, &from_row,
+                       &to_col, &to_row) == 4) {
                 // Convert to 0-based indices
-                from.col = tolower(from.col) - 'a';
-                from.row = 8 - from.row;
-                to.col = tolower(to.col) - 'a';
-                to.row = 8 - to.row;
+                from.col = tolower(from_col) - 'a';
+                from.row = 56 - from_row;
+                to.col = tolower(to_col) - 'a';
+                to.row = 56 - to_row;
 
                 // Create move
                 Bidak piece = getBidakAt(state.papan, from.col, from.row);
-                // Ensure createMove returns Move struct by value or handle pointer correctly
-                Move move = createMove(from, to, piece.tipe); //
+                
+                Move* move = malloc(sizeof(Move));
+                createMove(move, from, to, piece.tipe); //
 
                 // Validate and apply move
-                if (isValidMove(state.papan, &move, state.giliran)) {
-                    applyMove(&state, &move);
+                if (isValidMove(state.papan, move, state.giliran)) {
+                    applyMove(&state, move);
+                    printf("FROM COL : %d, FROM ROW: %d, TO COL: %d, TO ROW: %d\n", from.col, from.row, to.col, to.row);
+                    
                 } else {
+                	printf("FROM COL : %d, FROM ROW: %d, TO COL: %d, TO ROW: %d\n", from.col, from.row, to.col, to.row);
                     printCentered("Invalid move! Try again.", termWidth, BOLD BRIGHT_RED);
                     waitForKeyPress();
                 }
+                
             } else {
                  printCentered("Invalid input format. Please use 'e2 e4' format.", termWidth, BOLD BRIGHT_RED);
                  waitForKeyPress();
@@ -196,39 +225,41 @@ void zombieChess(GameType type, VersusOption mode) {
     waitForKeyPress();
 }
 
-GameState modeVersus() {
+GameState modePVP() {
 	
     GameState state;
-    Player putih, hitam;
+    Player *putih = malloc(sizeof(Player));
+	Player *hitam = malloc(sizeof(Player));
 
-    initPlayer(&putih, "Player 1", PUTIH);
-    initPlayer(&hitam, "Player 2", HITAM);
-    initGameState(&state, &putih, &hitam);
-    
+    initPlayer(putih, "Player 1", PUTIH);
+    initPlayer(hitam, "Player 2", HITAM);
+    initGameState(&state, putih, hitam);
+
     return state;
 }
 
 GameState modePVE() {
-	
-    GameState state;
-    Player putih, hitam;
 
-    initPlayer(&putih, "Player 1", PUTIH);
-    initPlayer(&hitam, "Computer 2", HITAM);
-    initGameState(&state, &putih, &hitam);
+    GameState state;
+    Player *putih = malloc(sizeof(Player));
+	Player *hitam = malloc(sizeof(Player));
+
+    initPlayer(putih, "Player 1", PUTIH);
+    initPlayer(hitam, "Computer 1", HITAM);
+    initGameState(&state, putih, hitam);
     
     return state;
 }
 
-GameState modeEVSE() {
-	
-	GameState state;
-    Player putih, hitam;
+GameState modeEVE() {
 
-    initPlayer(&putih, "Computer 1", PUTIH);
-    initPlayer(&hitam, "Computer 2", HITAM);
-    initGameState(&state, &putih, &hitam);
+    GameState state;
+    Player *putih = malloc(sizeof(Player));
+	Player *hitam = malloc(sizeof(Player));
+
+    initPlayer(putih, "Player 1", PUTIH);
+    initPlayer(hitam, "Player 2", HITAM);
+    initGameState(&state, putih, hitam);
     
     return state;
-
 }

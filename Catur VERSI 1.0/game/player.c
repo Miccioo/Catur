@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void initPlayer(Player *player, const char *nama, WarnaBidak warna) {
+void initPlayer(Player *player, char nama[MAX_NAMA], WarnaBidak warna) {
     strncpy(player->nama, nama, MAX_NAMA - 1);
     player->nama[MAX_NAMA - 1] = '\0';
     player->warna = warna;
