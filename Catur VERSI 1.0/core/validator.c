@@ -1,8 +1,6 @@
 #include "validator.h"
 #include <stdlib.h>
 #include <math.h>
-// #include <stdio.h> // Tambahkan untuk printf debugging jika perlu
-#define MAX_MOVES 256
 
 boolean isPathClear(Papan papan, Position from, Position to) {
     // Menghitung arah pergerakan
@@ -102,30 +100,28 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
     return false;
 }
 
-// Fungsi generateAllValidMoves tidak perlu diubah,
-// karena isValidMove akan menggunakannya dengan benar setelah perbaikan di atas.
 Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
     Move* moves = (Move*)malloc(sizeof(Move) * MAX_MOVES);
     if (moves == NULL) return NULL;
     
     int count = 0;
-	
+
 	int row, col, toRow, toCol;
     for (row = 0; row < 8; row++) {
         for (col = 0; col < 8; col++) {
-            Bidak piece = getBidakAt(papan, col, row); // getBidakAt menggunakan (kolom, baris)
+            Bidak piece = getBidakAt(papan, col, row);
             if (piece.id == -1 || piece.warna != currentPlayer->warna) continue;
 
             for (toRow = 0; toRow < 8; toRow++) {
                 for (toCol = 0; toCol < 8; toCol++) {
                     // Pastikan koordinat untuk createMove sesuai (baris, kolom) atau (kol, baris)
                     // Jika Position didefinisikan sebagai {row, col}, maka:
-                    Move move = createMove(
-                        (Position){row, col}, // Perhatikan ini harus (row, col) jika Position adalah {row, col}
-                        (Position){toRow, toCol},
-                        piece.tipe
+                    Move move;
+					createMove(&move, (Position){row, col},
+                        	  (Position){toRow, toCol},
+                        	  piece.tipe
                     );
-                    
+
                     if (isValidMove(papan, &move, currentPlayer)) {
                         moves[count++] = move;
                         if (count >= MAX_MOVES - 1) {
@@ -140,4 +136,25 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
 
     moves[count].bidak = '\0'; // Mark end of moves
     return moves;
+}
+
+int countLegalMoves(Papan papan, int baris, int kolom, Player* currentPlayer) {
+	int count = 0;
+	
+	Bidak piece = getBidakAt(papan, baris, kolom);
+	
+	for (int x = 0; x < 8; x++) {
+		for (int y = 0; y < 8; y++) {
+			Move move;
+			createMove(&move, (Position){baris, kolom},
+                	  (Position){x, y},
+                	  piece.tipe
+            );
+            
+            if (isValidMove(papan, &move, currentPlayer)) count++;
+
+		}
+	}
+	
+	return count;
 }

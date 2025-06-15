@@ -1,19 +1,10 @@
 #include "ai_engine.h"
 
-int evaluateState(GameState* state) {
-    int skor = 0;
-    int x, y;
-    for (y = 0; y < 8; y++) {
-        for (x = 0; x < 8; x++) {
-            Bidak b = state->papan.grid[y][x];
-            if (b.id != -1) {
-                skor += (b.warna == PUTIH) ? 1 : -1;
-            }
-        }
-    }
-    return skor;
+void freeGameTree(GameTree* tree) {
+    freeNodeRekursif(tree->root);
+    free(tree);
 }
-
+ 
 address createNode(GameState* state, Move langkah, address parent, int kedalaman) {
     address newNode = (address) malloc(sizeof(ElmtTree));
     newNode->state = *state; // Copy struct GameState
@@ -32,10 +23,11 @@ address createNode(GameState* state, Move langkah, address parent, int kedalaman
 void expandNode(address node, GameTree* tree) {
     if (node->kedalaman >= tree->maxKedalaman) return;
 
-    Move* langkahList = generateAllValidMoves(&node->state); // Kamu harus buat fungsi ini
+    Move* langkahList = (Move*)malloc(sizeof(Move) * MAX_MOVES);
+	langkahList = generateAllValidMoves(node->state.papan, node->state.giliran);
     int i = 0;
 
-    while (langkahList[i].bidak != NULL && node->jumlahAnak < MAX_CHILDREN) {
+    while (langkahList[i].bidak != TIDAK_ADA && node->jumlahAnak < MAX_CHILDREN) {
         GameState newState = node->state;
         applyMove(&newState, &langkahList[i]); // Kamu juga harus buat fungsi ini
 
@@ -101,5 +93,3 @@ Move getBestMove(GameTree* tree) {
 
     return bestMove;
 }
-
-

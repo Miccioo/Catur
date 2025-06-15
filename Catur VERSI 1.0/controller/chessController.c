@@ -103,9 +103,6 @@ void classicChess(GameType type, VersusOption mode) {
     while (!isGameOver(&state)) {
         clearScreen();
         printPapan(state.papan);
-
-		// Debugging
-		printf("%c %d", mode, mode);
 		
         // Print current player turn
         char turnMsg[50];
@@ -113,13 +110,32 @@ void classicChess(GameType type, VersusOption mode) {
                 state.giliran->nama,
                 (state.giliran->warna == PUTIH) ? "White" : "Black");
         printCentered(turnMsg, termWidth, BOLD BRIGHT_YELLOW);
+        
+        printCentered("1. Move", termWidth, BOLD BRIGHT_RED);
+		printCentered("2. Undo", termWidth, BOLD BRIGHT_RED);
+		printCentered("3. Exit", termWidth, BOLD BRIGHT_RED);
+		
+		int inputOption;
+		char input[10];
+		
+		// Ensure input buffer is cleared or handle newline character
+        if (fgets(input, sizeof(input), stdin) == NULL) {
+            return; // Handle EOF or error
+        }
+        
+        // Remove trailing newline if present
+        input[strcspn(input, "\n")] = 0;
 
-        if ((mode == PLAYER_VS_PLAYER) ||
-            (mode == PLAYER_VS_AI )) {
+        if (sscanf(input, "%d", &inputOption) != 1) {
+           		printCentered("Invalid input format. Please use number format.", termWidth, BOLD BRIGHT_RED);
+                waitForKeyPress();
+                continue;
+			}
+
+        if (mode == PLAYER_VS_PLAYER) {
             // Player's turn
             printCentered("Enter your move (e.g. e2 e4): ", termWidth, BOLD WHITE);
 
-            char input[10];
             // Ensure input buffer is cleared or handle newline character
             if (fgets(input, sizeof(input), stdin) == NULL) {
                 // Handle EOF or error
@@ -155,6 +171,7 @@ void classicChess(GameType type, VersusOption mode) {
                 	printf("FROM COL : %d, FROM ROW: %d, TO COL: %d, TO ROW: %d\n", from.col, from.row, to.col, to.row);
                     printCentered("Invalid move! Try again.", termWidth, BOLD BRIGHT_RED);
                     waitForKeyPress();
+                    
                 }
                 
             } else {

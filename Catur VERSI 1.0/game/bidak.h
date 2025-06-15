@@ -51,4 +51,6 @@ const char* getBidakVisualLine(TipeBidak tipe, int line_idx);
 void tampilkanBidakVisual(TipeBidak tipe, WarnaBidak warna);
 
 
+
+
 #endif

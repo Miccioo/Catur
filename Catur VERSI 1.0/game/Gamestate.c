@@ -111,20 +111,13 @@ void applyMove(GameState* state, Move* move) {
     Bidak captured = getBidakAt(state->papan, move->to.col, move->to.row);
     move->captured = (captured.id != -1) ? captured.tipe : '\0';
 
-//    Bidak kosong;
-//    initBidak(&kosong, TIDAK_ADA, TANPA_WARNA, -1, -1, -1);
-//    
-//    // Pindahkan bidak
-//    setBidakAt(&state->papan, piece, move->to.col, move->to.row);
-//    setBidakAt(&state->papan, kosong, move->from.col, move->from.row);
-    
     // Update status game
     if (captured.id != -1) {
         state->langkahTanpaGerak = 0;
     } else {
         state->langkahTanpaGerak++;
     }
-    
+
     // Tukar giliran
     switchTurn(state);
 }
