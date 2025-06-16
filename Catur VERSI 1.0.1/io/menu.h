@@ -6,6 +6,7 @@
 #include <string.h>
 #include "..\game\papan.h"
 #include "..\game\Gamestate.h"
+#include "..\user\account.h" // Tambahkan ini untuk definisi struct Account
 
 #ifdef _WIN32
 #include <windows.h>
@@ -41,7 +42,7 @@
 typedef enum {
     MENU_NEW_GAME,
     MENU_LOAD_GAME,
-    MENU_SETTINGS,
+    MENU_PROFILE,
     MENU_ABOUT,
     MENU_EXIT,
     MENU_COUNT
@@ -75,6 +76,8 @@ int showVersusOption(int termWidth);
 int showMainMenu(int termWidth);
 void aboutScreen(int termWidth);
 void settingsScreen(int termWidth);
+void profileScreen(int termWidth, Account* acc); // Sekarang Account sudah dikenal
+
 void waitForKeyPress();
 int getKeyPress();
 

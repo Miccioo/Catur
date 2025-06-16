@@ -118,16 +118,15 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
 
             for (toRow = 0; toRow < 8; toRow++) {
                 for (toCol = 0; toCol < 8; toCol++) {
-                    // Pastikan koordinat untuk createMove sesuai (baris, kolom) atau (kol, baris)
-                    // Jika Position didefinisikan sebagai {row, col}, maka:
-                    Move move = createMove(
-                        (Position){row, col}, // Perhatikan ini harus (row, col) jika Position adalah {row, col}
-                        (Position){toRow, toCol},
-                        piece.tipe
-                    );
+                    // Perbaikan: Buat objek Move, lalu teruskan alamatnya ke createMove
+                    Move currentMove; 
+                    createMove(&currentMove, // Argumen 1: Pointer ke Move
+                               (Position){row, col}, // Argumen 2: Position from
+                               (Position){toRow, toCol}, // Argumen 3: Position to
+                               piece.tipe); // Argumen 4: TipeBidak piece
                     
-                    if (isValidMove(papan, &move, currentPlayer)) {
-                        moves[count++] = move;
+                    if (isValidMove(papan, &currentMove, currentPlayer)) {
+                        moves[count++] = currentMove; // Simpan struct Move ke array
                         if (count >= MAX_MOVES - 1) {
                             moves[count].bidak = '\0'; // Mark end of moves
                             return moves;

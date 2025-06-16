@@ -1,12 +1,9 @@
 #include "home.h"
-#include "..\io\menu.h" // Pastikan ini diinclude untuk mengakses printCentered 3 argumen
+#include "..\io\menu.h"
 
-// Fungsi kustom untuk printCentered yang hanya digunakan di displayHomeBanner
-// Menggunakan nama unik untuk menghindari konflik dengan printCentered di menu.h
+// Custom centered printing function for the banner
 void home_printCentered(const char* text, int totalWidth, const char* textColor, const char* borderColor) {
     int textLength = strlen(text);
-    // Asumsi: totalWidth adalah lebar konten di dalam border (100).
-    // Padding untuk text di dalam contentWidth
     int padding = (totalWidth - textLength) / 2;
 
     printf("%s |   |", borderColor); // Left border
@@ -21,54 +18,84 @@ void home_printCentered(const char* text, int totalWidth, const char* textColor,
     printf("%s|   |\n", borderColor); // Right border
 }
 
-// Fungsi untuk menampilkan banner yang Anda inginkan
+// Function to display the centered banner
 void displayHomeBanner(int termWidth) {
-    // Pastikan termWidth cukup besar untuk banner (minimal 100 + padding)
-    // Jika tidak, tampilkan banner tanpa padding tengah atau sesuaikan lebar
-    // Untuk tujuan ini, kita asumsikan termWidth > 100.
-    
-    // Ini adalah salinan persis dari kode banner yang Anda berikan
-    int contentWidth = 100; // Width inside the border, derived from '~' line length
+    const int bannerWidth = 106; // Total width of the banner (100 content + 6 for borders)
+    int leftPadding = (termWidth - bannerWidth) / 2;
+    if (leftPadding < 0) leftPadding = 0; // Ensure no negative padding
 
-    printf(CYAN); // Set a base color for the frame
+    printf(CYAN); // Set base color for the frame
+    
+    // Top border
+    printf("%*s", leftPadding, "");
     printf(" _____                                                                                                    _____ \n");
+    printf("%*s", leftPadding, "");
     printf("( ___ )                                                                                                  ( ___ )\n");
+    printf("%*s", leftPadding, "");
     printf(" |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | \n");
 
-    // Print each line of the ASCII art centered
-    home_printCentered("'##:::::'##:'########:'##::::::::'######:::'#######::'##::::'##:'########:::::::", contentWidth, YELLOW, CYAN);
-    home_printCentered(" ##:'##: ##: ##.....:: ##:::::::'##... ##:'##.... ##: ###::'###: ##.....::::::::", contentWidth, YELLOW, CYAN);
-    home_printCentered(" ##: ##: ##: ##::::::: ##::::::: ##:::..:: ##:::: ##: ####'####: ##:::::::::::::", contentWidth, YELLOW, CYAN);
-    home_printCentered(" ##: ##: ##: ######::: ##::::::: ##::::::: ##:::: ##: ## ### ##: ######:::::::::", contentWidth, YELLOW, CYAN);
-    home_printCentered(" ##: ##: ##: ##...:::: ##::::::: ##::::::: ##:::: ##: ##. #: ##: ##...::::::::::", contentWidth, YELLOW, CYAN);
-    home_printCentered(" ##: ##: ##: ##::::::: ##::::::: ##::: ##: ##:::: ##: ##:.:: ##: ##:::::::::::::", contentWidth, YELLOW, CYAN);
-    home_printCentered(" . ###. ###:: ########: ########:. ######::. #######:: ##:::: ##: ########:::::::", contentWidth, YELLOW, CYAN);
-    home_printCentered(" :...::...:::........::........:::......::::.......:::..:::::..::........::::::::", contentWidth, YELLOW, CYAN);
+    // ASCII art lines
+    const char* yellowLines[] = {
+        "'##:::::'##:'########:'##::::::::'######:::'#######::'##::::'##:'########:::::::",
+        " ##:'##: ##: ##.....:: ##:::::::'##... ##:'##.... ##: ###::'###: ##.....::::::::",
+        " ##: ##: ##: ##::::::: ##::::::: ##:::..:: ##:::: ##: ####'####: ##:::::::::::::",
+        " ##: ##: ##: ######::: ##::::::: ##::::::: ##:::: ##: ## ### ##: ######:::::::::",
+        " ##: ##: ##: ##...:::: ##::::::: ##::::::: ##:::: ##: ##. #: ##: ##...::::::::::",
+        " ##: ##: ##: ##::::::: ##::::::: ##::: ##: ##:::: ##: ##:.:: ##: ##:::::::::::::",
+        " . ###. ###:: ########: ########:. ######::. #######:: ##:::: ##: ########:::::::",
+        " :...::...:::........::........:::......::::.......:::..:::::..::........::::::::"
+    };
+    
+    const char* greenLines[] = {
+        "'########::'#######::::::::",
+        "... ##..::'##.... ##:::::::",
+        "::: ##:::: ##:::: ##:::::::",
+        "::: ##:::: ##:::: ##:::::::",
+        "::: ##:::: ##:::: ##:::::::",
+        "::: ##:::: ##:::: ##:::::::",
+        "::: ##::::. #######::::::::",
+        ":::..::::::.......:::::::::"
+    };
+    
+    const char* magentaLines[] = {
+        ":'######::'##::::'##:'########::'######:::'######:::'######::::::'###::::'##::::'##:'########:::::::",
+        "'##... ##: ##:::: ##: ##.....::'##... ##:'##... ##:'##... ##::::'## ##::: ###::'###: ##.....::::::::",
+        " ##:::..:: ##:::: ##: ##::::::: ##:::..:: ##:::..:: ##:::..::::'##:. ##:: ####'####: ##:::::::::::::",
+        " ##::::::: #########: ######:::. ######::. ######:: ##::'####:'##:::. ##: ## ### ##: ######:::::::::",
+        " ##::::::: ##.... ##: ##...:::::..... ##::..... ##: ##::: ##:: #########: ##. #: ##: ##...::::::::::",
+        " ##::: ##: ##:::: ##: ##:::::::'##::: ##:'##::: ##: ##::: ##:: ##.... ##: ##:.:: ##: ##:::::::::::::",
+        ". ######:: ##:::: ##: ########:. ######::. ######::. ######::: ##:::: ##: ##:::: ##: ########:::::::",
+        ":......:::..:::::..::........:::......::::......::::......::::..:::::..::..:::::..::........::::::::"
+    };
+	
+	int i;
+    // Print yellow lines
+    for (i = 0; i < 8; i++) {
+        printf("%*s", leftPadding, "");
+        home_printCentered(yellowLines[i], 100, YELLOW, CYAN);
+    }
 
-    home_printCentered("'########::'#######::::::::", contentWidth, GREEN, CYAN);
-    home_printCentered("... ##..::'##.... ##:::::::", contentWidth, GREEN, CYAN);
-    home_printCentered("::: ##:::: ##:::: ##:::::::", contentWidth, GREEN, CYAN);
-    home_printCentered("::: ##:::: ##:::: ##:::::::", contentWidth, GREEN, CYAN);
-    home_printCentered("::: ##:::: ##:::: ##:::::::", contentWidth, GREEN, CYAN);
-    home_printCentered("::: ##:::: ##:::: ##:::::::", contentWidth, GREEN, CYAN);
-    home_printCentered("::: ##::::. #######::::::::", contentWidth, GREEN, CYAN);
-    home_printCentered(":::..::::::.......:::::::::", contentWidth, GREEN, CYAN);
+    // Print green lines
+    for (i = 0; i < 8; i++) {
+        printf("%*s", leftPadding, "");
+        home_printCentered(greenLines[i], 100, GREEN, CYAN);
+    }
 
-    home_printCentered(":'######::'##::::'##:'########::'######:::'######:::'######::::::'###::::'##::::'##:'########:::::::", contentWidth, MAGENTA, CYAN);
-    home_printCentered("'##... ##: ##:::: ##: ##.....::'##... ##:'##... ##:'##... ##::::'## ##::: ###::'###: ##.....::::::::", contentWidth, MAGENTA, CYAN);
-    home_printCentered(" ##:::..:: ##:::: ##: ##::::::: ##:::..:: ##:::..:: ##:::..::::'##:. ##:: ####'####: ##:::::::::::::", contentWidth, MAGENTA, CYAN);
-    home_printCentered(" ##::::::: #########: ######:::. ######::. ######:: ##::'####:'##:::. ##: ## ### ##: ######:::::::::", contentWidth, MAGENTA, CYAN);
-    home_printCentered(" ##::::::: ##.... ##: ##...:::::..... ##::..... ##: ##::: ##:: #########: ##. #: ##: ##...::::::::::", contentWidth, MAGENTA, CYAN);
-    home_printCentered(" ##::: ##: ##:::: ##: ##:::::::'##::: ##:'##::: ##: ##::: ##:: ##.... ##: ##:.:: ##: ##:::::::::::::", contentWidth, MAGENTA, CYAN);
-    home_printCentered(". ######:: ##:::: ##: ########:. ######::. ######::. ######::: ##:::: ##: ##:::: ##: ########:::::::", contentWidth, MAGENTA, CYAN);
-    home_printCentered(":......:::..:::::..::........:::......::::......::::......::::..:::::..::..:::::..::........::::::::", contentWidth, MAGENTA, CYAN);
+    // Print magenta lines
+    for (i = 0; i < 8; i++) {
+        printf("%*s", leftPadding, "");
+        home_printCentered(magentaLines[i], 100, MAGENTA, CYAN);
+    }
 
+    // Bottom border
+    printf("%*s", leftPadding, "");
     printf(" |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___|\n");
+    printf("%*s", leftPadding, "");
     printf("(_____)                                                                                                  (_____)\n");
-    printf("\n"); // Add a new line for spacing
-    printf(RESET); // Reset color to default
+    
+    printf("\n"); // Add spacing
+    printf(RESET); // Reset color
 }
-
 
 int showHomeScreen() {
     const char *options[] = {
@@ -79,12 +106,12 @@ int showHomeScreen() {
     
     int selected = 0;
     int termWidth, termHeight;
-    Account currentAccount; // Untuk menyimpan data akun yang login
+    Account currentAccount;
 
     while (1) {
         clearScreen();
         getTerminalSize(&termWidth, &termHeight);
-        displayHomeBanner(termWidth); // Menggunakan banner kustom
+        displayHomeBanner(termWidth);
 
         printf("\n\n");
         int i;
@@ -92,9 +119,9 @@ int showHomeScreen() {
             if (i == selected) {
                 char menuItem[50];
                 sprintf(menuItem, "> %s <", options[i]);
-                printCentered(menuItem, termWidth, BOLD BRIGHT_GREEN); // Menggunakan printCentered dari menu.h (3 argumen)
+                printCentered(menuItem, termWidth, BOLD BRIGHT_GREEN);
             } else {
-                printCentered(options[i], termWidth, BOLD WHITE); // Menggunakan printCentered dari menu.h (3 argumen)
+                printCentered(options[i], termWidth, BOLD WHITE);
             }
         }
         
@@ -111,14 +138,13 @@ int showHomeScreen() {
                 switch (selected) {
                     case HOME_LOGIN:
                         clearScreen();
-                        getTerminalSize(&termWidth, &termHeight); // Refresh termWidth after clearScreen
+                        getTerminalSize(&termWidth, &termHeight);
                         displayHomeBanner(termWidth);
                         printCentered("LOGIN", termWidth, BOLD BRIGHT_CYAN);
-                        // Implementasi login
-                        if (login(&currentAccount)) { // Memanggil fungsi login dari account.h/c
+                        if (login(&currentAccount)) {
                             printCentered("Login berhasil! Mengalihkan ke halaman utama...", termWidth, BOLD BRIGHT_GREEN);
-                            waitForKeyPress(); // Tunggu sebentar
-                            return HOME_LOGIN; // Menandakan login berhasil
+                            waitForKeyPress();
+                            return HOME_LOGIN;
                         } else {
                             printCentered("Username atau password salah. Coba lagi.", termWidth, BOLD BRIGHT_RED);
                             waitForKeyPress();
@@ -126,11 +152,10 @@ int showHomeScreen() {
                         break;
                     case HOME_REGISTER:
                         clearScreen();
-                        getTerminalSize(&termWidth, &termHeight); // Refresh termWidth after clearScreen
+                        getTerminalSize(&termWidth, &termHeight);
                         displayHomeBanner(termWidth);
                         printCentered("REGISTER", termWidth, BOLD BRIGHT_CYAN);
-                        // Implementasi register
-                        if (registerAccount(&currentAccount)) { // Memanggil fungsi registerAccount dari account.h/c
+                        if (registerAccount(&currentAccount)) {
                             printCentered("Registrasi berhasil! Silakan login.", termWidth, BOLD BRIGHT_GREEN);
                             waitForKeyPress();
                         } else {
@@ -140,12 +165,12 @@ int showHomeScreen() {
                         break;
                     case HOME_EXIT:
                         clearScreen();
-                        getTerminalSize(&termWidth, &termHeight); // Refresh termWidth after clearScreen
+                        getTerminalSize(&termWidth, &termHeight);
                         printCentered("Terima kasih telah bermain!", termWidth, BOLD BRIGHT_MAGENTA);
                         printCentered("Sampai jumpa!", termWidth, BOLD BRIGHT_CYAN);
-                        return HOME_EXIT; // Menandakan ingin keluar
+                        return HOME_EXIT;
                 }
-                break; // Break dari case '\r' / '\n'
+                break;
             }
             case 27: return HOME_EXIT; // Escape key
         }

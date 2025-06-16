@@ -1,26 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "controller/chessController.h"
-#include "home/home.h" // Tambahkan ini
+#include "home/home.h"
+#include "user/account.h" // Tambahkan ini untuk mengakses currentLoggedInAccount
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 int main(int argc, char *argv[]) {
-    int homeResult = showHomeScreen(); // Panggil fungsi home screen
+    int homeResult = showHomeScreen();
 
     if (homeResult == HOME_LOGIN) {
-        startChess(); // Jika login berhasil, lanjutkan ke permainan
+        startChess();
     } else if (homeResult == HOME_EXIT) {
-        // Dealokasi memori global jika ada (misalnya, jika Anda punya pohon game yang tidak di-free)
-        // Saat ini, tidak ada dealokasi eksplisit yang terlihat di sini,
-        // tetapi jika ada, ini adalah tempatnya.
-        // Misalnya: destroyGameTree(globalTree);
+        // Bebaskan memori currentLoggedInAccount saat keluar dari home screen
+        if (currentLoggedInAccount != NULL) {
+            free(currentLoggedInAccount);
+            currentLoggedInAccount = NULL;
+        }
         return 0; // Keluar dari program
     }
     
-    // Jika HOME_REGISTER atau pilihan lain yang tidak mengarah ke game,
-    // program akan kembali ke loop di showHomeScreen atau keluar.
-    // Dalam implementasi saat ini, setelah register, ia kembali ke home screen.
-
     return 0;
 }

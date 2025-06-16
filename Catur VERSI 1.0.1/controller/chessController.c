@@ -1,18 +1,18 @@
 //chessController.c
 #include "chessController.h"
-#include "../ai/ai_engine.h"  // Tambahkan ini untuk GameTree, minimax, getBestMove
-#include "../game/player.h"    // Tambahkan ini untuk Player
-#include "../game/papan.h"     // Tambahkan ini untuk Papan
-#include "../game/Gamestate.h" // Tambahkan ini untuk GameState, Move, Position, Bidak, isGameOver, applyMove
-#include "../core/validator.h" // Tambahkan ini untuk isValidMove
-#include <ctype.h> // For tolower
-#include <stdio.h> // For sprintf, fgets, sscanf, stdin
-#include <string.h> // For strcpy
-#include <stdlib.h> // For free
+#include "../ai/ai_engine.h"
+#include "../game/player.h"
+#include "../game/papan.h"
+#include "../game/Gamestate.h"
+#include "../core/validator.h"
+#include "../user/account.h" // Tambahkan include ini untuk mengakses currentLoggedInAccount
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 void startChess() {
     int termWidth, termHeight;
-    // Papan papan; // papan is not used directly here, only in helper functions.
     getTerminalSize(&termWidth, &termHeight);
 
     while (1) {
@@ -33,8 +33,15 @@ void startChess() {
                 waitForKeyPress();
                 break;
 
-            case MENU_SETTINGS:
-                settingsScreen(termWidth);
+            case MENU_PROFILE:
+                // Periksa apakah ada akun yang login sebelum menampilkan profil
+                if (currentLoggedInAccount != NULL) { // Gunakan variabel global
+                    profileScreen(termWidth, currentLoggedInAccount); // Teruskan akun yang login
+                } else {
+                    clearScreen();
+                    printCentered("Anda harus login terlebih dahulu untuk melihat profil.", termWidth, BOLD BRIGHT_RED);
+                    waitForKeyPress();
+                }
                 break;
 
             case MENU_ABOUT:
@@ -45,6 +52,11 @@ void startChess() {
                 clearScreen();
                 printCentered("Thank you for playing!", termWidth, BOLD BRIGHT_MAGENTA);
                 printCentered("Goodbye!", termWidth, BOLD BRIGHT_CYAN);
+                // Bebaskan memori currentLoggedInAccount saat keluar
+                if (currentLoggedInAccount != NULL) {
+                    free(currentLoggedInAccount);
+                    currentLoggedInAccount = NULL;
+                }
                 return;
         }
     }

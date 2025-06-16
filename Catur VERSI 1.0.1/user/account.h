@@ -16,6 +16,12 @@ typedef struct {
     int Elo;
 } Account;
 
+// Deklarasi variabel global untuk menyimpan akun yang sedang login
+extern Account* currentLoggedInAccount; // Pointer ke akun yang sedang login
+
+// Deklarasi helper clearInputBuffer
+void clearInputBuffer(); // Deklarasikan di sini agar bisa diakses di semua .c yang menggunakannya
+
 boolean login(Account* acc);
 boolean registerAccount(Account* acc);
 void saveAccount(const Account* acc);
