@@ -6,7 +6,7 @@
 #include <string.h>
 #include "..\game\papan.h"
 #include "..\game\Gamestate.h"
-#include "..\user\account.h" // Tambahkan ini untuk definisi struct Account
+#include "..\user\account.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -76,7 +76,7 @@ int showVersusOption(int termWidth);
 int showMainMenu(int termWidth);
 void aboutScreen(int termWidth);
 void settingsScreen(int termWidth);
-void profileScreen(int termWidth, Account* acc); // Sekarang Account sudah dikenal
+void profileScreen(int termWidth, Account* acc);
 
 void waitForKeyPress();
 int getKeyPress();

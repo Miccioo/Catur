@@ -1,11 +1,12 @@
 #include "validator.h"
 #include <stdlib.h>
 #include <math.h>
-// #include <stdio.h> // Tambahkan untuk printf debugging jika perlu
+#include <stdio.h>
+#include "..\game\bidak.h"
 #define MAX_MOVES 256
 
 boolean isPathClear(Papan papan, Position from, Position to) {
-    // Menghitung arah pergerakan
+    // Calculate movement direction
     int dx = 0;
     if (to.col > from.col) dx = 1;
     else if (to.col < from.col) dx = -1;
@@ -14,121 +15,134 @@ boolean isPathClear(Papan papan, Position from, Position to) {
     if (to.row > from.row) dy = 1;
     else if (to.row < from.row) dy = -1;
     
-    // Titik awal untuk pengecekan jalur (setelah kotak asal)
+    // Starting point for path checking (after the origin square)
     Position current = {from.row + dy, from.col + dx};
     
-    // Loop selama belum mencapai kotak tujuan
+    // Loop as long as the target square has not been reached
     while (current.row != to.row || current.col != to.col) {
-        // Periksa apakah ada bidak di jalur
-        if (getBidakAt(papan, current.col, current.row).id != -1) {
-            return false; // Jalur tidak jelas
+        // Check if there is a piece in the path
+        Bidak bidakDiJalur = getBidakAt(papan, current.col, current.row);
+        if (bidakDiJalur.id != -1) {
+            return false; // Path is not clear
         }
-        // Lanjutkan ke kotak berikutnya di jalur
+        // Continue to the next square in the path
         current.row += dy;
         current.col += dx;
     }
-    return true; // Jalur jelas
+    return true; // Path is clear
 }
 
 boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
-    // Mengambil bidak di posisi asal
+    // Get the piece at the starting position
     Bidak piece = getBidakAt(papan, move->from.col, move->from.row);
 
-    // 1. Validasi keberadaan bidak dan kepemilikan
-    // Jika tidak ada bidak di posisi 'from' atau bidak tersebut bukan milik pemain saat ini
+    // 1. Validate piece existence and ownership
     if (piece.id == -1 || piece.warna != currentPlayer->warna) {
-        // printf("DEBUG: Invalid - no piece or not current player's piece (id:%d, warna_piece:%d, warna_player:%d)\n", piece.id, piece.warna, currentPlayer->warna); // Debugging
         return false;
     }
 
-    // Menghitung perbedaan baris dan kolom (delta x dan delta y)
+    // Calculate row and column differences (delta x and delta y)
     int dx = move->to.col - move->from.col;
     int dy = move->to.row - move->from.row;
     
-    // Mengambil bidak di posisi tujuan
+    // Get the piece at the target position
     Bidak target = getBidakAt(papan, move->to.col, move->to.row);
-    // Menentukan apakah ini adalah langkah menangkap
+    // Determine if this is a capture move
     boolean isCapture = (target.id != -1 && target.warna != piece.warna);
-    // Menentukan apakah kotak tujuan ditempati oleh bidak sendiri (illegal move)
+    // Determine if the target square is occupied by own piece (illegal move)
     boolean isTargetOwnPiece = (target.id != -1 && target.warna == piece.warna);
 
-    // Langkah apapun tidak boleh berakhir di kotak yang ditempati oleh bidak sendiri
+    // Any move must not end on a square occupied by own piece
     if (isTargetOwnPiece) {
-        // printf("DEBUG: Invalid - target square occupied by own piece.\n"); // Debugging
         return false;
     }
 
-    // Logika validasi berdasarkan jenis bidak
+    // Validation logic based on piece type
     switch (piece.tipe) {
         case PION: {
-            int direction = (piece.warna == PUTIH) ? -1 : 1; // Putih bergerak ke atas (-row), Hitam ke bawah (+row)
-            int startRow = (piece.warna == PUTIH) ? 6 : 1; // Baris awal pion Putih (indeks 6), Hitam (indeks 1)
+            int direction = (piece.warna == PUTIH) ? -1 : 1; // White moves up (-row), Black moves down (+row)
+            int startRow = (piece.warna == PUTIH) ? 6 : 1; // White pawn start row (index 6), Black (index 1)
 
-            // Langkah maju 1 kotak
+            // Move 1 square forward
             if (dx == 0 && dy == direction && target.id == -1) {
                 return true;
             }
-            // Langkah maju 2 kotak dari posisi awal
+            // Move 2 squares forward from starting position
             if (dx == 0 && dy == 2 * direction && move->from.row == startRow &&
-                getBidakAt(papan, move->from.col, move->from.row + direction).id == -1 && // Pastikan kotak di depan tidak terhalang
+                getBidakAt(papan, move->from.col, move->from.row + direction).id == -1 && // Ensure square in front is not blocked
                 target.id == -1) {
                 return true;
             }
-            // Langkah menangkap diagonal
+            // Diagonal capture move
             if (abs(dx) == 1 && dy == direction && isCapture) {
                 return true;
             }
-            // En Passant (belum diimplementasikan di sini, tambahkan jika perlu)
-            break; // Jika tidak ada kondisi pion yang terpenuhi, lanjut ke return false di akhir fungsi
+            break; 
         }
         case BENTENG: // Rook
-            return (dx == 0 || dy == 0) && // Bergerak horizontal atau vertikal
-                   isPathClear(papan, move->from, move->to); // Jalur harus jelas
+            if ((dx == 0 || dy == 0) && isPathClear(papan, move->from, move->to)) { // Moves horizontally or vertically
+                return true;
+            }
+            break;
         case MENTERI: // Queen
-            return (abs(dx) == abs(dy) || dx == 0 || dy == 0) && // Bergerak diagonal, horizontal, atau vertikal
-                   isPathClear(papan, move->from, move->to); // Jalur harus jelas
+            if ((abs(dx) == abs(dy) || dx == 0 || dy == 0) && isPathClear(papan, move->from, move->to)) { // Moves diagonally, horizontally, or vertically
+                return true;
+            }
+            break;
         case GAJAH: // Bishop
-            return abs(dx) == abs(dy) && // Bergerak diagonal
-                   isPathClear(papan, move->from, move->to); // Jalur harus jelas
+            if (abs(dx) == abs(dy) && isPathClear(papan, move->from, move->to)) { // Moves diagonally
+                return true;
+            }
+            break;
         case KUDA: // Knight
-            // Gerakan 'L'
-            return (abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2); // Kuda tidak memerlukan isPathClear
+            // 'L' shape move
+            if ((abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2)) { // Knight does not require isPathClear
+                return true;
+            }
+            break;
         case RAJA: // King
-            return abs(dx) <= 1 && abs(dy) <= 1; // Bergerak satu kotak ke segala arah
-            // Castling (belum diimplementasikan di sini, tambahkan jika perlu)
+            if (abs(dx) <= 1 && abs(dy) <= 1) { // Moves one square in any direction
+                return true;
+            }
+            break;
+        case TIDAK_ADA:
+            return false; // Should not validate TIDAK_ADA piece
     }
 
-    // Jika tidak ada jenis bidak yang cocok atau aturan tidak terpenuhi
     return false;
 }
 
-// Fungsi generateAllValidMoves tidak perlu diubah,
-// karena isValidMove akan menggunakannya dengan benar setelah perbaikan di atas.
 Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
     Move* moves = (Move*)malloc(sizeof(Move) * MAX_MOVES);
-    if (moves == NULL) return NULL;
+    if (moves == NULL) {
+        fprintf(stderr, "Error: Failed to allocate memory for moves in generateAllValidMoves.\n");
+        return NULL;
+    }
     
     int count = 0;
 	
 	int row, col, toRow, toCol;
     for (row = 0; row < 8; row++) {
         for (col = 0; col < 8; col++) {
-            Bidak piece = getBidakAt(papan, col, row); // getBidakAt menggunakan (kolom, baris)
-            if (piece.id == -1 || piece.warna != currentPlayer->warna) continue;
+            // getBidakAt(board, column, row)
+            Bidak piece = getBidakAt(papan, col, row); 
+
+            if (piece.id == -1 || piece.warna != currentPlayer->warna) {
+                continue; 
+            }
 
             for (toRow = 0; toRow < 8; toRow++) {
                 for (toCol = 0; toCol < 8; toCol++) {
-                    // Perbaikan: Buat objek Move, lalu teruskan alamatnya ke createMove
-                    Move currentMove; 
-                    createMove(&currentMove, // Argumen 1: Pointer ke Move
-                               (Position){row, col}, // Argumen 2: Position from
-                               (Position){toRow, toCol}, // Argumen 3: Position to
-                               piece.tipe); // Argumen 4: TipeBidak piece
+                    Move currentMove;
+                    createMove(&currentMove, 
+                               (Position){row, col},
+                               (Position){toRow, toCol},
+                               piece.tipe);
                     
                     if (isValidMove(papan, &currentMove, currentPlayer)) {
-                        moves[count++] = currentMove; // Simpan struct Move ke array
+                        moves[count++] = currentMove;
                         if (count >= MAX_MOVES - 1) {
-                            moves[count].bidak = '\0'; // Mark end of moves
+                            moves[count].bidak = TIDAK_ADA; 
                             return moves;
                         }
                     }
@@ -137,6 +151,6 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
         }
     }
 
-    moves[count].bidak = '\0'; // Mark end of moves
+    moves[count].bidak = TIDAK_ADA; 
     return moves;
 }

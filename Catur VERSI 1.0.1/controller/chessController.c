@@ -5,11 +5,45 @@
 #include "../game/papan.h"
 #include "../game/Gamestate.h"
 #include "../core/validator.h"
-#include "../user/account.h" // Tambahkan include ini untuk mengakses currentLoggedInAccount
+#include "../user/account.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+// Function to display valid moves table
+void displayValidMovesTable(Papan papan, Move* validMoves, int termWidth) {
+    clearScreen();
+    printPapan(papan); // Display board again to be visible with the table
+    printCentered("Available Moves for Selected Piece:", termWidth, BOLD BRIGHT_YELLOW);
+
+    printf("\n");
+    printCentered("+---------------------+", termWidth, BOLD BRIGHT_MAGENTA);
+    printCentered("| VALID MOVES         |", termWidth, BOLD BRIGHT_CYAN);
+    printCentered("+---------------------+", termWidth, BOLD BRIGHT_MAGENTA);
+    printCentered("| Target Position     |", termWidth, BOLD WHITE);
+    printCentered("+---------------------+", termWidth, BOLD BRIGHT_MAGENTA);
+
+    if (validMoves[0].bidak == TIDAK_ADA) { // Check if the move list is empty using TIDAK_ADA
+        printCentered("|  NO MOVES AVAILABLE |", termWidth, BOLD RED);
+    } else {
+        int i = 0;
+        while (validMoves[i].bidak != TIDAK_ADA) { // Iterate using TIDAK_ADA as end marker
+            char moveStr[50];
+            char toCol = 'a' + validMoves[i].to.col; // Convert column to char
+            
+            // Format string for each move (only target position)
+            sprintf(moveStr, "| %c%d                |", 
+                    toCol, 8 - validMoves[i].to.row); // Convert row to chess notation
+            printCentered(moveStr, termWidth, BOLD WHITE);
+            i++;
+        }
+    }
+    printCentered("+---------------------+", termWidth, BOLD BRIGHT_MAGENTA);
+    printf("\n");
+    printCentered("Enter target position (e.g., e4), 'undo', or 'quit'.", termWidth, BOLD BRIGHT_YELLOW);
+}
+
 
 void startChess() {
     int termWidth, termHeight;
@@ -17,6 +51,7 @@ void startChess() {
 
     while (1) {
         int choice = showMainMenu(termWidth);
+        // Ensure menu.h is updated with English translations for menu options if you haven't done so.
 
         switch (choice) {
             case MENU_NEW_GAME: {
@@ -34,12 +69,11 @@ void startChess() {
                 break;
 
             case MENU_PROFILE:
-                // Periksa apakah ada akun yang login sebelum menampilkan profil
-                if (currentLoggedInAccount != NULL) { // Gunakan variabel global
-                    profileScreen(termWidth, currentLoggedInAccount); // Teruskan akun yang login
+                if (currentLoggedInAccount != NULL) {
+                    profileScreen(termWidth, currentLoggedInAccount);
                 } else {
                     clearScreen();
-                    printCentered("Anda harus login terlebih dahulu untuk melihat profil.", termWidth, BOLD BRIGHT_RED);
+                    printCentered("You must log in first to view your profile.", termWidth, BOLD BRIGHT_RED);
                     waitForKeyPress();
                 }
                 break;
@@ -52,7 +86,6 @@ void startChess() {
                 clearScreen();
                 printCentered("Thank you for playing!", termWidth, BOLD BRIGHT_MAGENTA);
                 printCentered("Goodbye!", termWidth, BOLD BRIGHT_CYAN);
-                // Bebaskan memori currentLoggedInAccount saat keluar
                 if (currentLoggedInAccount != NULL) {
                     free(currentLoggedInAccount);
                     currentLoggedInAccount = NULL;
@@ -85,116 +118,234 @@ void handleGameType(int termWidth, GameType type) {
 }
 
 void classicChess(GameType type, VersusOption mode) {
-    // Initialize game state
     GameState state;
     Player putih, hitam;
     int termWidth, termHeight;
-    char from_col, from_row, to_col, to_row;
     getTerminalSize(&termWidth, &termHeight);
     
     switch (mode) {
     	case PLAYER_VS_PLAYER:
-    		state = modePVP();
+    		initPlayer(&putih, "White Player", PUTIH);
+            initPlayer(&hitam, "Black Player", HITAM);
     		break;
     		
     	case PLAYER_VS_AI:
-    		state = modePVE();
+    		initPlayer(&putih, "Player", PUTIH);
+            initPlayer(&hitam, "AI", HITAM);
     		break;
     		
     	case AI_VS_AI:
-    		state = modeEVE();
+    		initPlayer(&putih, "AI White", PUTIH);
+            initPlayer(&hitam, "AI Black", HITAM);
     		break;
     	
     	default:
-        // Handle invalid mode
-        fprintf(stderr, "Invalid game mode\n");
-        return;
+            fprintf(stderr, "Invalid game mode\n");
+            return;
 	}
+    initGameState(&state, &putih, &hitam);
 
-    // Main game loop
     while (!isGameOver(&state)) {
         clearScreen();
         printPapan(state.papan);
 
-		// Debugging
-		printf("%c %d", mode, mode);
-		
-        // Print current player turn
         char turnMsg[50];
         sprintf(turnMsg, "%s's turn (%s)",
                 state.giliran->nama,
                 (state.giliran->warna == PUTIH) ? "White" : "Black");
         printCentered(turnMsg, termWidth, BOLD BRIGHT_YELLOW);
 
-        if ((mode == PLAYER_VS_PLAYER) ||
-            (mode == PLAYER_VS_AI )) {
+        if ((mode == PLAYER_VS_PLAYER && state.giliran->warna == PUTIH) ||
+            (mode == PLAYER_VS_PLAYER && state.giliran->warna == HITAM) ||
+            (mode == PLAYER_VS_AI && state.giliran->warna == PUTIH)
+           ) {
             // Player's turn
-            printCentered("Enter your move (e.g. e2 e4): ", termWidth, BOLD WHITE);
+            Position from;
+            char from_col_char, from_row_char;
+            Bidak selectedPiece;
+            Move* possibleMovesForSelectedPiece = NULL;
 
-            char input[10];
-            // Ensure input buffer is cleared or handle newline character
-            if (fgets(input, sizeof(input), stdin) == NULL) {
-                // Handle EOF or error
-                return;
-            }
+            boolean pieceSelected = false;
+            while (!pieceSelected) {
+                clearScreen();
+                printPapan(state.papan);
+                printCentered(turnMsg, termWidth, BOLD BRIGHT_YELLOW);
+                printCentered("Enter the position of the piece you want to move (e.g., e2), 'undo', or 'quit': ", termWidth, BOLD WHITE);
 
-            // Remove trailing newline if present
-            input[strcspn(input, "\n")] = 0;
-
-            // Parse move
-            Position from, to;
-            if (sscanf(input, "%c%c %c%c",
-                       &from_col, &from_row,
-                       &to_col, &to_row) == 4) {
-                // Convert to 0-based indices
-                from.col = tolower(from_col) - 'a';
-                from.row = 56 - from_row;
-                to.col = tolower(to_col) - 'a';
-                to.row = 56 - to_row;
-
-                // Create move
-                Bidak piece = getBidakAt(state.papan, from.col, from.row);
-                
-                Move* move = malloc(sizeof(Move));
-                createMove(move, from, to, piece.tipe); //
-
-                // Validate and apply move
-                if (isValidMove(state.papan, move, state.giliran)) {
-                    applyMove(&state, move);
-                    printf("FROM COL : %d, FROM ROW: %d, TO COL: %d, TO ROW: %d\n", from.col, from.row, to.col, to.row);
-                    
-                } else {
-                	printf("FROM COL : %d, FROM ROW: %d, TO COL: %d, TO ROW: %d\n", from.col, from.row, to.col, to.row);
-                    printCentered("Invalid move! Try again.", termWidth, BOLD BRIGHT_RED);
-                    waitForKeyPress();
+                char input_from[10];
+                if (fgets(input_from, sizeof(input_from), stdin) == NULL) {
+                    return;
                 }
-                
-            } else {
-                 printCentered("Invalid input format. Please use 'e2 e4' format.", termWidth, BOLD BRIGHT_RED);
-                 waitForKeyPress();
+                input_from[strcspn(input_from, "\n")] = 0;
+
+                char lowerInput_from[10];
+                int k;
+                for (k = 0; input_from[k]; k++) {
+                    lowerInput_from[k] = tolower(input_from[k]);
+                }
+                lowerInput_from[k] = '\0';
+
+                if (strcmp(lowerInput_from, "undo") == 0) {
+                    if (state.history != NULL) {
+                        undoMove(&state);
+                        printCentered("Move undone.", termWidth, BOLD BRIGHT_GREEN);
+                        if (mode == PLAYER_VS_AI && state.giliran->warna == HITAM) {
+                            if (state.history != NULL) {
+                                undoMove(&state);
+                                printCentered("AI's previous move also undone.", termWidth, BOLD BRIGHT_GREEN);
+                            }
+                        }
+                    } else {
+                        printCentered("No moves to undo.", termWidth, BOLD BRIGHT_RED);
+                    }
+                    waitForKeyPress();
+                    continue; // Go back to selecting a piece
+                } else if (strcmp(lowerInput_from, "quit") == 0) {
+                    printCentered("Exiting game...", termWidth, BOLD BRIGHT_MAGENTA);
+                    waitForKeyPress();
+                    return; // Exit classicChess function
+                }
+
+                if (sscanf(input_from, "%c%c", &from_col_char, &from_row_char) == 2) {
+                    from.col = tolower(from_col_char) - 'a';
+                    from.row = 8 - (from_row_char - '0');
+
+                    selectedPiece = getBidakAt(state.papan, from.col, from.row);
+                    
+                    if (selectedPiece.id == -1 || selectedPiece.warna != state.giliran->warna) {
+                        printCentered("Not your piece or starting position is empty. Try again.", termWidth, BOLD BRIGHT_RED);
+                        waitForKeyPress();
+                        continue; // Go back to selecting a piece
+                    }
+
+                    Move* allPossibleMoves = generateAllValidMoves(state.papan, state.giliran);
+                    
+                    possibleMovesForSelectedPiece = (Move*)malloc(sizeof(Move) * MAX_MOVES);
+                    int moveCount = 0;
+                    int j = 0;
+                    while (allPossibleMoves[j].bidak != TIDAK_ADA) { 
+                        if (allPossibleMoves[j].from.row == from.row && allPossibleMoves[j].from.col == from.col) {
+                            possibleMovesForSelectedPiece[moveCount++] = allPossibleMoves[j];
+                        }
+                        j++;
+                    }
+                    possibleMovesForSelectedPiece[moveCount].bidak = TIDAK_ADA; // Mark end of array
+
+                    free(allPossibleMoves);
+
+                    if (possibleMovesForSelectedPiece[0].bidak == TIDAK_ADA) { 
+                        printCentered("No valid moves for the selected piece. Choose another piece.", termWidth, BOLD BRIGHT_RED);
+                        waitForKeyPress();
+                        free(possibleMovesForSelectedPiece);
+                        possibleMovesForSelectedPiece = NULL;
+                        continue; // Go back to selecting a piece
+                    }
+
+                    pieceSelected = true;
+                } else {
+                    printCentered("Invalid input format. Use 'e2'.", termWidth, BOLD BRIGHT_RED);
+                    waitForKeyPress();
+                    continue; // Go back to selecting a piece
+                }
             }
+
+            // Display table of possible moves
+            displayValidMovesTable(state.papan, possibleMovesForSelectedPiece, termWidth);
+            
+            // Now ask for target position
+            Position to;
+            char to_col_char, to_row_char;
+            char input_to[10];
+
+            // Loop for target input
+            boolean validTargetInput = false;
+            while(!validTargetInput) {
+                printCentered("Enter target position (e.g., e4), 'undo', or 'quit'.", termWidth, BOLD WHITE);
+                if (fgets(input_to, sizeof(input_to), stdin) == NULL) {
+                    free(possibleMovesForSelectedPiece);
+                    return;
+                }
+                input_to[strcspn(input_to, "\n")] = 0;
+
+                char lowerInput_to[10];
+                int k;
+                for (k = 0; input_to[k]; k++) {
+                    lowerInput_to[k] = tolower(input_to[k]);
+                }
+                lowerInput_to[k] = '\0';
+
+                if (strcmp(lowerInput_to, "undo") == 0) {
+                    if (state.history != NULL) {
+                        undoMove(&state);
+                        printCentered("Move undone.", termWidth, BOLD BRIGHT_GREEN);
+                        if (mode == PLAYER_VS_AI && state.giliran->warna == HITAM) {
+                            if (state.history != NULL) {
+                                undoMove(&state);
+                                printCentered("AI's previous move also undone.", termWidth, BOLD BRIGHT_GREEN);
+                            }
+                        }
+                    } else {
+                        printCentered("No moves to undo.", termWidth, BOLD BRIGHT_RED);
+                    }
+                    waitForKeyPress();
+                    free(possibleMovesForSelectedPiece); // Ensure memory is freed
+                    return; // Return to main menu or startChess()
+                } else if (strcmp(lowerInput_to, "quit") == 0) {
+                    printCentered("Exiting game...", termWidth, BOLD BRIGHT_MAGENTA);
+                    waitForKeyPress();
+                    free(possibleMovesForSelectedPiece);
+                    return;
+                }
+
+                if (sscanf(input_to, "%c%c", &to_col_char, &to_row_char) == 2) {
+                    to.col = tolower(to_col_char) - 'a';
+                    to.row = 8 - (to_row_char - '0');
+
+                    Move playerMove;
+                    createMove(&playerMove, from, to, selectedPiece.tipe);
+
+                    boolean foundValidMove = false;
+                    int i = 0;
+                    while (possibleMovesForSelectedPiece[i].bidak != TIDAK_ADA) { // Use TIDAK_ADA as end marker
+                        if (possibleMovesForSelectedPiece[i].to.row == to.row && possibleMovesForSelectedPiece[i].to.col == to.col) {
+                            foundValidMove = true;
+                            break;
+                        }
+                        i++;
+                    }
+
+                    if (foundValidMove) {
+                        applyMove(&state, &playerMove);
+                        printCentered("Move applied successfully.", termWidth, BOLD BRIGHT_GREEN);
+                        validTargetInput = true; // Exit target input loop
+                    } else {
+                        printCentered("Target position is not valid for the selected piece. Try again.", termWidth, BOLD BRIGHT_RED);
+                        waitForKeyPress();
+                        // Go back to displaying move table and asking for target input
+                        displayValidMovesTable(state.papan, possibleMovesForSelectedPiece, termWidth);
+                    }
+                } else {
+                    printCentered("Invalid target input format. Use 'e4'.", termWidth, BOLD BRIGHT_RED);
+                    waitForKeyPress();
+                    // Go back to displaying move table and asking for target input
+                    displayValidMovesTable(state.papan, possibleMovesForSelectedPiece, termWidth);
+                }
+            }
+            free(possibleMovesForSelectedPiece); // Free memory after move is successful or exiting loop
+
         } else {
             // AI's turn
             printCentered("AI is thinking...", termWidth, BOLD BRIGHT_CYAN);
 
-            // Create game tree for AI
-            GameTree* tree = (GameTree*)createGameTree(&state, 3, (state.giliran->warna == PUTIH)); //
+            GameTree* tree = createGameTree(&state, 3, (state.giliran->warna == PUTIH));
 
             if (tree != NULL) {
-                // Run minimax algorithm
-                minimax(tree->root, tree->maxKedalaman, tree->isMaximizingPlayer); //
-
-                // Get best move and apply it
-                Move bestMove = getBestMove(tree); //
-                applyMove(&state, &bestMove); //
-
-                // Free memory
-                free(tree); //
+                minimax(tree->root, tree->maxKedalaman, tree->isMaximizingPlayer);
+                Move bestMove = getBestMove(tree);
+                applyMove(&state, &bestMove);
             } else {
                 printCentered("Failed to create AI game tree!", termWidth, BOLD BRIGHT_RED);
-                waitForKeyPress();
             }
-
             waitForKeyPress();
         }
     }
@@ -216,7 +367,6 @@ void classicChess(GameType type, VersusOption mode) {
 }
 
 void evolveChess(GameType type, VersusOption mode) {
-    // Implementation for Evolve Chess
     int termWidth, termHeight;
     getTerminalSize(&termWidth, &termHeight);
 
@@ -227,7 +377,6 @@ void evolveChess(GameType type, VersusOption mode) {
 }
 
 void zombieChess(GameType type, VersusOption mode) {
-    // Implementation for Zombie Chess
     int termWidth, termHeight;
     getTerminalSize(&termWidth, &termHeight);
 
@@ -238,40 +387,16 @@ void zombieChess(GameType type, VersusOption mode) {
 }
 
 GameState modePVP() {
-	
     GameState state;
-    Player *putih = malloc(sizeof(Player));
-	Player *hitam = malloc(sizeof(Player));
-
-    initPlayer(putih, "Player 1", PUTIH);
-    initPlayer(hitam, "Player 2", HITAM);
-    initGameState(&state, putih, hitam);
-
     return state;
 }
 
 GameState modePVE() {
-
     GameState state;
-    Player *putih = malloc(sizeof(Player));
-	Player *hitam = malloc(sizeof(Player));
-
-    initPlayer(putih, "Player 1", PUTIH);
-    initPlayer(hitam, "Computer 1", HITAM);
-    initGameState(&state, putih, hitam);
-    
     return state;
 }
 
 GameState modeEVE() {
-
     GameState state;
-    Player *putih = malloc(sizeof(Player));
-	Player *hitam = malloc(sizeof(Player));
-
-    initPlayer(putih, "Player 1", PUTIH);
-    initPlayer(hitam, "Player 2", HITAM);
-    initGameState(&state, putih, hitam);
-    
     return state;
 }

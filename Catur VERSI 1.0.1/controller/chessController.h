@@ -2,6 +2,7 @@
 #define CHESSCONTROLLER_H
 
 #include "..\game\Gamestate.h"
+#include "..\core\chess_move.h" // Perlu ditambahkan untuk Move
 
 void startChess();
 
@@ -16,5 +17,7 @@ GameState modePVP();
 GameState modePVE();
 GameState modeEVE();
 
-//void showNewGameOption(int termWidth, Papan papan);
+// Fungsi baru untuk menampilkan tabel langkah valid
+void displayValidMovesTable(Papan papan, Move* validMoves, int termWidth);
+
 #endif
