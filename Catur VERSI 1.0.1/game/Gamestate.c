@@ -1,6 +1,4 @@
 #include "Gamestate.h"
-#include <stdlib.h>
-#include <string.h>
 
 void initGameState(GameState* state, Player* putih, Player* hitam) {
     if (state == NULL || putih == NULL || hitam == NULL) return;

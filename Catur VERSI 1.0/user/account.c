@@ -1,15 +1,15 @@
 #include "account.h"
 
 boolean login(Account* acc) {
-	char username[MAX_USERNAME], password[MAX_PASSWORD];
-	int wins, losses, Elo;
-	
-	FILE *fp = fopen("../data/akun.txt", "r");
-	
-	if (fp == NULL) {
-	    printf("Gagal membuka file!\n");
-	    return;
-	}
+//	char username[MAX_USERNAME], password[MAX_PASSWORD];
+//	int wins, losses, Elo;
+//	
+//	FILE *fp = fopen("../data/akun.txt", "r");
+//	
+//	if (fp == NULL) {
+//	    printf("Gagal membuka file!\n");
+//	    return;
+//	}
 	
 	
 }

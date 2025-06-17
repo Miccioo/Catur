@@ -118,12 +118,12 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
 
             for (toRow = 0; toRow < 8; toRow++) {
                 for (toCol = 0; toCol < 8; toCol++) {
-                    // Perbaikan: Buat objek Move, lalu teruskan alamatnya ke createMove
+                	
                     Move currentMove; 
-                    createMove(&currentMove, // Argumen 1: Pointer ke Move
-                               (Position){row, col}, // Argumen 2: Position from
-                               (Position){toRow, toCol}, // Argumen 3: Position to
-                               piece.tipe); // Argumen 4: TipeBidak piece
+                    createMove(&currentMove, &count,
+                               (Position){row, col}, 
+                               (Position){toRow, toCol},
+                               piece.tipe);
                     
                     if (isValidMove(papan, &currentMove, currentPlayer)) {
                         moves[count++] = currentMove; // Simpan struct Move ke array
@@ -139,4 +139,24 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
 
     moves[count].bidak = '\0'; // Mark end of moves
     return moves;
+}
+
+int countLegalMoves(Papan papan, int baris, int kolom, Player* currentPlayer) {
+	int count = 0;
+	
+	Bidak piece = getBidakAt(papan, baris, kolom);
+	
+	for (int x = 0; x < 8; x++) {
+		for (int y = 0; y < 8; y++) {
+			Move move;
+			createMove(&move, &count, (Position){baris, kolom},
+                	  (Position){x, y},
+                	  piece.tipe
+            );
+            
+            if (isValidMove(papan, &move, currentPlayer)) count++;
+
+		}
+	}
+	return count;
 }

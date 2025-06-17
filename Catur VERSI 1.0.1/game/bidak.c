@@ -134,8 +134,7 @@ const char* bidakVisualsArray[7][BIDAK_VISUAL_HEIGHT] = {
      "     /____\\          ",
      "    (======)         ",
      "    }======{         ",
-     "   (________)        ", 
-     "                     "
+     "   (________)        "
     },
     // RAJA (Disesuaikan ke 21 lebar)
     {"      _:_            ",

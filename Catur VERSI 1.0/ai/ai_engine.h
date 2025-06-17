@@ -4,6 +4,7 @@
 
 #include "../core/evaluate_system.h"
 #include "../core/validator.h"
+#include <stdint.h>
 
 #define MAX_CHILDREN 64 // langkah legal maksimal per posisi
 
@@ -13,6 +14,7 @@ typedef struct tElmtTree {
     int value;
     Move langkah;
     address parent;
+    uint64_t zobristKey; // Zobrist hashing key untuk trasnsposition table
     address children[MAX_CHILDREN];
     int jumlahAnak;
     int kedalaman;
@@ -25,7 +27,7 @@ typedef struct {
 	boolean isMaximizingPlayer;
 } GameTree;
 
-void freeGameTree(GameTree* tree);
+void freeTree(address node);
 
 // Checks if the GameTree is empty
 boolean isEmptyTree(GameTree X);
@@ -35,7 +37,7 @@ GameTree* createGameTree(GameState* rootState, int maxKedalaman, boolean isMaxim
 // Creates and initializes a single node for the game tree.
 address createNode(GameState* state, Move langkah, address parent, int kedalaman);
 
-int minimax(address node, int depth, boolean isMaximizingPlayer);
+int minimax(address node, int depth, int alpha, int beta, boolean isMaximizingPlayer);
 
 Move getBestMove(GameTree* tree);
 

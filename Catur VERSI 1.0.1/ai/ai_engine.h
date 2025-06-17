@@ -2,11 +2,10 @@
 #ifndef AI_ENGINE_H
 #define AI_ENGINE_H
 
-#include "..\game\Gamestate.h" // For GameState, Move
-#include "..\core\chess_move.h" // For Move if not fully in Gamestate.h
-#include "stdlib.h"             // For malloc, free, NULL
-#include "..\core\boolean.h"    // For boolean type (assuming this defines 'boolean' and related values)
-// Consider including <stdbool.h> if you want to use the standard 'bool' type and 'true'/'false'.
+#include "../game/Gamestate.h"
+#include "../core/validator.h"
+#include "../core/evaluate_system.h"
+#include "omp.h"
 
 #define MAX_CHILDREN 64 // langkah legal maksimal per posisi
 
@@ -28,6 +27,7 @@ typedef struct {
 	boolean isMaximizingPlayer;
 } GameTree;
 
+void freeTree(address node);
 
 // Checks if the GameTree is empty
 boolean isEmptyTree(GameTree X);
@@ -37,8 +37,8 @@ GameTree* createGameTree(GameState* rootState, int maxKedalaman, boolean isMaxim
 // Creates and initializes a single node for the game tree.
 address createNode(GameState* state, Move langkah, address parent, int kedalaman);
 
-int minimax(address node, int depth, boolean isMaximizingPlayer);
+int minimax(address node, int depth, int alpha, int beta, boolean isMaximizingPlayer, Move* killerMoves);
 
-Move getBestMove(GameTree* tree); // Corrected and uncommented
+Move getBestMove(GameTree* tree);
 
 #endif // AI_ENGINE_H

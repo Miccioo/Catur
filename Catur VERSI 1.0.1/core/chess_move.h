@@ -17,6 +17,8 @@ typedef struct {
     TipeBidak captured;      // Bidak yang dimakan (jika ada)
     bool isCheck;       // cek status skak
     bool isCheckmate;   // cek status skakmat
+    bool isFromTT; // apakah langkah ini berasal dari transposition table
+    int score; // skor evaluasi langkah (digunakan untuk AI)
 } Move;
 
 // Node untuk Stack dan Linked List
@@ -55,8 +57,7 @@ void clearList(MoveList* list);
 void destroyList(MoveList* list);
 
 // Function untuk utilitas
-void createMove(Move *move, Position from, Position to, TipeBidak piece);
+void createMove(Move *move, int* count, Position from, Position to, TipeBidak piece);
 void printMove(Move move);
-bool isValidPosition(Position pos);
 
 #endif // CHESS_MOVE_H 

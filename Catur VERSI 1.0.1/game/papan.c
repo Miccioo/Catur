@@ -163,3 +163,7 @@ void pindahkanBidak(Papan *papan, Move* move) {
 boolean isEmptyBidak(Papan* papan, int x, int y) {
 	return papan->grid[x][y].tipe == TIDAK_ADA;
 }
+
+boolean isValidSquare(Position pos) {
+    return (pos.col >= 0 && pos.col < UKURAN_PAPAN && pos.row >= 0 && pos.row < UKURAN_PAPAN);
+}

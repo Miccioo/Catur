@@ -29,6 +29,7 @@ typedef struct {
     int y;          // Posisi y (0-7)
     int hasMoved;   // 0 = belum pernah bergerak, 1 = sudah
     int id;         // ID unik untuk bidak
+    int DoubleStep; // Khusus untuk bidak pion, 0 = tidak double step, 1 = double step
 } Bidak;
 
 // Fungsi untuk inisialisasi bidak
@@ -49,8 +50,5 @@ const char* getBidakVisualLine(TipeBidak tipe, int line_idx);
 
 // Fungsi untuk menampilkan representasi grafis bidak (individu)
 void tampilkanBidakVisual(TipeBidak tipe, WarnaBidak warna);
-
-
-
 
 #endif

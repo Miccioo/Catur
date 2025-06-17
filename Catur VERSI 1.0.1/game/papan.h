@@ -30,4 +30,5 @@ void pindahkanBidak(Papan *papan, Move* move);
 // Fungsi untuk mengecek apakah ada bidak di posisi tertentu
 boolean isEmptyBidak(Papan* papan, int x, int y);
 
+boolean isValidSquare(Position pos);
 #endif

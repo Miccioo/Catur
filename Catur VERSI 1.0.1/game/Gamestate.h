@@ -7,6 +7,9 @@
 #include "..\core\chess_move.h"
 #include "..\core\boolean.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 typedef struct {
     Papan papan;
     Player* pemainPutih;

@@ -3,6 +3,11 @@
         "gamestate.h": "c",
         "papan.h": "c",
         "boolean.h": "c",
-        "bidak.h": "c"
+        "bidak.h": "c",
+        "player.h": "c",
+        "evaluate_system.h": "c",
+        "chess_move.h": "c",
+        "move_ordering.h": "c",
+        "validator.h": "c"
     }
 }

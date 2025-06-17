@@ -151,13 +151,18 @@ void destroyList(MoveList* list) {
 }
 
 // Implementasi function utilitas
-void createMove(Move* move, Position from, Position to, TipeBidak piece) {
+void createMove(Move* move, int* count, Position from, Position to, TipeBidak piece) {
     move->from = from; 
     move->to = to;
     move->bidak = piece;
-    move->captured = '\0';
+    move->captured = TIDAK_ADA;
     move->isCheck = false;
     move->isCheckmate = false;
+    move->isFromTT = false; // Default
+    move->score = 0; // Default score
+    if (count != NULL) {
+        (*count)++;
+    }
 }
 
 void printMove(Move move) {
@@ -181,6 +186,3 @@ void printMove(Move move) {
     printf("\n");
 }
 
-bool isValidPosition(Position pos) {
-    return (pos.row >= 0 && pos.row < 8 && pos.col >= 0 && pos.col < 8);
-} 

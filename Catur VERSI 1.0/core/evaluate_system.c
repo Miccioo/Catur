@@ -156,14 +156,14 @@ int evaluatePositional(GameState* state) {
 	};
     
 	const int kingTable[8][8] = {
-		{ 50,  50,  50,  50,  50,  50,  50,  50 },
-        { 50,  50,  50,  50,  50,  50,  50,  50 },
-        {  0,   0,  10,  20,  20,  10,   0,   0 },
-        {  0,   0,  10,  20,  20,  10,   0,   0 },
-        {  0,   0,  10,  20,  20,  10,   0,   0 },
-        {  0,   0,  10,  20,  20,  10,   0,   0 },
-        {  0,   0,  10,  20,  20,  10,   0,   0 },
-        {  0,   0,   0,  20,  20,   0,   0,   0 }
+		{  0,   0,   0,   0,   0,   0,   0,   0 },
+        {  0,   0,   5,   5,   5,   5,   0,   0 },
+        {  0,   5,   5,  10,  10,   5,   5,   0 },
+        {  0,   5,  10,  20,  20,  10,   5,   0 },
+        {  0,   5,  10,  20,  20,  10,   5,   0 },
+        {  0,   0,   5,  10,  10,   5,   0,   0 },
+        {  0,  -5,  -5,  -5,  -5,  -5,  -5,   0 },
+        {  0,   0,   5,   0, -15,   0,  10,   0 }
 	};
     
     int positionalScore = 0;
@@ -259,6 +259,104 @@ int evaluateKingAttack(GameState* state, Position kingPos, WarnaBidak attackerCo
     return attackScore;
 }
 
+/**
+ * Mengecek apakah kotak (x,y) diserang oleh bidak lawan dengan warna tertentu
+ * @return true jika kotak dalam keadaan diserang, false jika tidak
+ */
+boolean isSquareAttacked(GameState* state, int x, int y, WarnaBidak attackerColor) {
+    // Cek serangan dari pion
+    int pawnDir = (attackerColor == PUTIH) ? 1 : -1;
+    Position pawnAttacks[2] = {
+        {x-1, y + pawnDir},  // Serangan diagonal kiri
+        {x+1, y + pawnDir}   // Serangan diagonal kanan
+    };
+    
+    for (int i = 0; i < 2; i++) {
+        Position pos = pawnAttacks[i];
+        if (pos.col >= 0 && pos.col < 8 && pos.row >= 0 && pos.row < 8) {
+            Bidak piece = getBidakAt(state->papan, pos.col, pos.row);
+            if (piece.tipe == PION && piece.warna == attackerColor) {
+                return true;
+            }
+        }
+    }
+
+    // Cek serangan dari kuda (knight)
+    Position knightMoves[8] = {
+        {x-2, y-1}, {x-1, y-2}, {x+1, y-2}, {x+2, y-1},
+        {x+2, y+1}, {x+1, y+2}, {x-1, y+2}, {x-2, y+1}
+    };
+    
+    for (int i = 0; i < 8; i++) {
+        Position pos = knightMoves[i];
+        if (pos.col >= 0 && pos.col < 8 && pos.row >= 0 && pos.row < 8) {
+            Bidak piece = getBidakAt(state->papan, pos.col, pos.row);
+            if (piece.tipe == KUDA && piece.warna == attackerColor) {
+                return true;
+            }
+        }
+    }
+
+    // Cek serangan garis lurus (benteng/ratu)
+    Position straightDirs[4] = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+    for (int i = 0; i < 4; i++) {
+        Position dir = straightDirs[i];
+        for (int step = 1; step < 8; step++) {
+            int cx = x + dir.col * step;
+            int cy = y + dir.row * step;
+            
+            if (cx < 0 || cx >= 8 || cy < 0 || cy >= 8) break;
+            
+            Bidak piece = getBidakAt(state->papan, cx, cy);
+            if (piece.tipe != TIDAK_ADA) {
+                if (piece.warna == attackerColor && 
+                    (piece.tipe == BENTENG || piece.tipe == MENTERI)) {
+                    return true;
+                }
+                break;  // Terhalang bidak lain
+            }
+        }
+    }
+
+    // Cek serangan diagonal (gajah/ratu)
+    Position diagonalDirs[4] = {{1,1}, {1,-1}, {-1,1}, {-1,-1}};
+    for (int i = 0; i < 4; i++) {
+        Position dir = diagonalDirs[i];
+        for (int step = 1; step < 8; step++) {
+            int cx = x + dir.col * step;
+            int cy = y + dir.row * step;
+            
+            if (cx < 0 || cx >= 8 || cy < 0 || cy >= 8) break;
+            
+            Bidak piece = getBidakAt(state->papan, cx, cy);
+            if (piece.tipe != TIDAK_ADA) {
+                if (piece.warna == attackerColor && 
+                    (piece.tipe == GAJAH || piece.tipe == MENTERI)) {
+                    return true;
+                }
+                break;  // Terhalang bidak lain
+            }
+        }
+    }
+
+    // Cek serangan raja (jarak 1 kotak)
+    for (int dy = -1; dy <= 1; dy++) {
+        for (int dx = -1; dx <= 1; dx++) {
+            if (dx == 0 && dy == 0) continue;
+            
+            int cx = x + dx;
+            int cy = y + dy;
+            if (cx >= 0 && cx < 8 && cy >= 0 && cy < 8) {
+                Bidak piece = getBidakAt(state->papan, cx, cy);
+                if (piece.tipe == RAJA && piece.warna == attackerColor) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
 /**
  * Evaluasi mobilitas bidak dan kontrol ruang
  */

@@ -1,6 +1,4 @@
 #include "validator.h"
-#include <stdlib.h>
-#include <math.h>
 
 boolean isPathClear(Papan papan, Position from, Position to) {
     // Menghitung arah pergerakan
@@ -75,7 +73,8 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
             // Langkah menangkap diagonal
             if (abs(dx) == 1 && dy == direction && isCapture) {
                 return true;
-            }
+            } 
+			
             // En Passant (belum diimplementasikan di sini, tambahkan jika perlu)
             break; // Jika tidak ada kondisi pion yang terpenuhi, lanjut ke return false di akhir fungsi
         }
@@ -155,6 +154,5 @@ int countLegalMoves(Papan papan, int baris, int kolom, Player* currentPlayer) {
 
 		}
 	}
-	
 	return count;
 }

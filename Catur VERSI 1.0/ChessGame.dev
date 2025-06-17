@@ -19,7 +19,7 @@ ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=
+OverrideOutputName=ChessGame.exe
 HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
@@ -28,8 +28,8 @@ Folders=ai,controller,core,data,game,io,user
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=1
-CompilerSettings=0000000000000000001000000
-UnitCount=24
+CompilerSettings=00000000a0000000001000000
+UnitCount=26
 
 [VersionInfo]
 Major=1
@@ -39,14 +39,14 @@ Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=
+FileVersion=1.0.0.0
 FileDescription=Developed using the Dev-C++ IDE
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=
+ProductVersion=1.0.0.0
 AutoIncBuildNr=0
 SyncProduct=1
 
@@ -284,6 +284,26 @@ BuildCmd=
 FileName=user\account.c
 CompileCpp=0
 Folder=user
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit25]
+FileName=core\evaluate_system.c
+CompileCpp=0
+Folder=core
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit26]
+FileName=core\evaluate_system.h
+CompileCpp=0
+Folder=core
 Compile=1
 Link=1
 Priority=1000

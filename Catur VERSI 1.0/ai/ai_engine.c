@@ -1,18 +1,23 @@
 #include "ai_engine.h"
 
-void freeGameTree(GameTree* tree) {
-    freeNodeRekursif(tree->root);
-    free(tree);
+void freeTree(address node) {
+    if (!node) return;
+    for (int i = 0; i < node->jumlahAnak; i++) {
+        freeTree(node->children[i]);
+    }
+    free(node);
 }
- 
+
 address createNode(GameState* state, Move langkah, address parent, int kedalaman) {
     address newNode = (address) malloc(sizeof(ElmtTree));
     newNode->state = *state; // Copy struct GameState
     newNode->langkah = langkah;
     newNode->parent = parent;
+    newNode->zobristKey = computeKey(state);  // Simpan Zobrist key
     newNode->kedalaman = kedalaman;
     newNode->jumlahAnak = 0;
-    newNode->value = evaluateState(state);
+//    newNode->value = evaluateState(state);
+	newNode->value = 0;
     int i;
     for (i = 0; i < MAX_CHILDREN; i++) {
         newNode->children[i] = NULL;
@@ -23,19 +28,18 @@ address createNode(GameState* state, Move langkah, address parent, int kedalaman
 void expandNode(address node, GameTree* tree) {
     if (node->kedalaman >= tree->maxKedalaman) return;
 
-    Move* langkahList = (Move*)malloc(sizeof(Move) * MAX_MOVES);
-	langkahList = generateAllValidMoves(node->state.papan, node->state.giliran);
+    Move* langkahList = generateAllValidMoves(node->state.papan, node->state.giliran);
     int i = 0;
 
-    while (langkahList[i].bidak != TIDAK_ADA && node->jumlahAnak < MAX_CHILDREN) {
+    while (i < MAX_MOVES && langkahList[i].from.row != -1 && node->jumlahAnak < MAX_CHILDREN) {
         GameState newState = node->state;
-        applyMove(&newState, &langkahList[i]); // Kamu juga harus buat fungsi ini
+        applyMove(&newState, &langkahList[i]);
 
         address child = createNode(&newState, langkahList[i], node, node->kedalaman + 1);
         node->children[node->jumlahAnak++] = child;
         tree->jumlahNodeSekarang++;
 
-        expandNode(child, tree); // Rekursif bangun tree
+        expandNode(child, tree);
         i++;
     }
 }
@@ -51,17 +55,19 @@ GameTree* createGameTree(GameState* rootState, int kedalamanMaks, boolean isMaxi
     return tree;
 }
 
-int minimax(address node, int depth, boolean isMaximizingPlayer) {
+int minimax(address node, int depth, int alpha, int beta, boolean isMaximizingPlayer) {
     if (depth == 0 || node->jumlahAnak == 0) {
         return evaluateState(&node->state);
     }
 
     if (isMaximizingPlayer) {
         int maxEval = INT_MIN;
-        int i;
-        for (i = 0; i < node->jumlahAnak; i++) {
-            int eval = minimax(node->children[i], depth - 1, false);
-            if (eval > maxEval) maxEval = eval;
+        for (int i = 0; i < node->jumlahAnak; i++) {
+            int eval = minimax(node->children[i], depth - 1, alpha, beta, false);
+            maxEval = (eval > maxEval) ? eval : maxEval;
+            alpha = (alpha > eval) ? alpha : eval;
+            
+            if (beta <= alpha) break;
         }
         node->value = maxEval;
         return maxEval;
@@ -69,8 +75,11 @@ int minimax(address node, int depth, boolean isMaximizingPlayer) {
         int minEval = INT_MAX;
         int i;
         for (i = 0; i < node->jumlahAnak; i++) {
-            int eval = minimax(node->children[i], depth - 1, true);
-            if (eval < minEval) minEval = eval;
+            int eval = minimax(node->children[i], depth - 1, alpha, beta, true);
+            minEval = (eval < minEval) ? eval : minEval;
+            beta = (beta < eval) ? beta : eval;
+            
+            if (beta <= alpha) break;
         }
         node->value = minEval;
         return minEval;
@@ -78,11 +87,13 @@ int minimax(address node, int depth, boolean isMaximizingPlayer) {
 }
 
 Move getBestMove(GameTree* tree) {
+	
+	if (tree->jumlahNodeSekarang == 0) return (Move){0};
+	
     int bestValue = tree->isMaximizingPlayer ? INT_MIN : INT_MAX;
     Move bestMove = {0};
-	
-	int i;
-    for (i = 0; i < tree->root->jumlahAnak; i++) {
+
+    for (int i = 0; i < tree->root->jumlahAnak; i++) {
         address child = tree->root->children[i];
         if ((tree->isMaximizingPlayer && child->value > bestValue) ||
             (!tree->isMaximizingPlayer && child->value < bestValue)) {
