@@ -175,23 +175,23 @@ void classicChess(GameType type, VersusOption mode) {
             // Create game tree for AI
             GameTree* tree = (GameTree*)createGameTree(&state, 1, (state.giliran->warna == PUTIH)); //
 
-            if (tree != NULL) {
+//            if (tree != NULL) {
                 // Run minimax algorithm
-                minimax(tree->root, tree->maxKedalaman, INT_MIN, INT_MAX, tree->isMaximizingPlayer, killerMoves);
+//                minimax(tree->root, tree->maxKedalaman, INT_MIN, INT_MAX, tree->isMaximizingPlayer, killerMoves);
                 // Get best move and apply it
-                Move bestMove = getBestMove(tree);
-                
-                if (isValidMove(state.papan, &bestMove, state.giliran)) {
-				    applyMove(&state, &bestMove);
-				}
+//                Move bestMove = getBestMove(tree);
+//                
+//                if (isValidMove(state.papan, &bestMove, state.giliran)) {
+//				    applyMove(&state, &bestMove);
+//				}
 
                 // Free memory
-                freeTree(tree->root);
-                free(tree);
-            } else {
-                printCentered("Failed to create AI game tree!", termWidth, BOLD BRIGHT_RED);
-                waitForKeyPress();
-            }
+//                freeTree(tree->root);
+//                free(tree);
+//            } else {
+//                printCentered("Failed to create AI game tree!", termWidth, BOLD BRIGHT_RED);
+//                waitForKeyPress();
+//            }
 			printf("\n");
 			printCentered("Click Enter to Continue... ", termWidth, BOLD BRIGHT_CYAN);
             waitForKeyPress();

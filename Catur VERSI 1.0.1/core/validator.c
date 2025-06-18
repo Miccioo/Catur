@@ -1,7 +1,6 @@
 #include "validator.h"
 #include <stdlib.h>
 #include <math.h>
-// #include <stdio.h> // Tambahkan untuk printf debugging jika perlu
 #define MAX_MOVES 256
 
 boolean isPathClear(Papan papan, Position from, Position to) {
@@ -78,7 +77,7 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
             if (abs(dx) == 1 && dy == direction && isCapture) {
                 return true;
             }
-            // En Passant (belum diimplementasikan di sini, tambahkan jika perlu)
+            // En Passant
             break; // Jika tidak ada kondisi pion yang terpenuhi, lanjut ke return false di akhir fungsi
         }
         case BENTENG: // Rook
@@ -95,16 +94,15 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
             return (abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2); // Kuda tidak memerlukan isPathClear
         case RAJA: // King
             return abs(dx) <= 1 && abs(dy) <= 1; // Bergerak satu kotak ke segala arah
-            // Castling (belum diimplementasikan di sini, tambahkan jika perlu)
+            // Castling
     }
 
     // Jika tidak ada jenis bidak yang cocok atau aturan tidak terpenuhi
     return false;
 }
 
-// Fungsi generateAllValidMoves tidak perlu diubah,
-// karena isValidMove akan menggunakannya dengan benar setelah perbaikan di atas.
 Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
+	
     Move* moves = (Move*)malloc(sizeof(Move) * MAX_MOVES);
     if (moves == NULL) return NULL;
     
@@ -113,31 +111,63 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer) {
 	int row, col, toRow, toCol;
     for (row = 0; row < 8; row++) {
         for (col = 0; col < 8; col++) {
-            Bidak piece = getBidakAt(papan, col, row); // getBidakAt menggunakan (kolom, baris)
+            Bidak piece = getBidakAt(papan, col, row);
             if (piece.id == -1 || piece.warna != currentPlayer->warna) continue;
-
-            for (toRow = 0; toRow < 8; toRow++) {
-                for (toCol = 0; toCol < 8; toCol++) {
-                	
-                    Move currentMove; 
-                    createMove(&currentMove, &count,
-                               (Position){row, col}, 
-                               (Position){toRow, toCol},
-                               piece.tipe);
-                    
-                    if (isValidMove(papan, &currentMove, currentPlayer)) {
-                        moves[count++] = currentMove; // Simpan struct Move ke array
-                        if (count >= MAX_MOVES - 1) {
-                            moves[count].bidak = '\0'; // Mark end of moves
-                            return moves;
-                        }
-                    }
-                }
-            }
+			Position pos = {row, col};
+			switch (piece.tipe) {
+				case PION:
+					generatePawnMoves(pos, moves, &count, currentPlayer, &papan);
+					break;
+					
+				case BENTENG:
+					generateRookMoves(pos, moves, &count, currentPlayer, &papan);
+					break;
+					
+				case KUDA:
+					generateKnightMoves(pos, moves, &count, currentPlayer, &papan);
+					break;
+					
+				case GAJAH:
+					generateBishopMoves(pos, moves, &count, currentPlayer, &papan);
+					break;
+					
+				case MENTERI:
+					generateQueenMoves(pos, moves, &count, currentPlayer, &papan);
+					break;
+					
+				case RAJA:
+					generateKingMoves(pos, moves, &count, currentPlayer, &papan);
+					break;
+					
+			}
+			if (count >= MAX_MOVES - 1) {
+				moves[count].bidak = TIDAK_ADA;
+				return moves;
+			}
+			
+			
+//            for (toRow = 0; toRow < 8; toRow++) {
+//                for (toCol = 0; toCol < 8; toCol++) {
+//                	
+//                    Move currentMove; 
+//                    createMove(&currentMove, &count,
+//                               (Position){row, col}, 
+//                               (Position){toRow, toCol},
+//                               piece.tipe);
+//                    
+//                    if (isValidMove(papan, &currentMove, currentPlayer)) {
+//                        moves[count++] = currentMove; // Simpan struct Move ke array
+//                        if (count >= MAX_MOVES - 1) {
+//                            moves[count].bidak = '\0'; // Mark end of moves
+//                            return moves;
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 
-    moves[count].bidak = '\0'; // Mark end of moves
+    moves[count].bidak = TIDAK_ADA;
     return moves;
 }
 

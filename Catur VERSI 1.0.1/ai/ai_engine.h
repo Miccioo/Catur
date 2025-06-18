@@ -2,9 +2,7 @@
 #ifndef AI_ENGINE_H
 #define AI_ENGINE_H
 
-#include "../game/Gamestate.h"
-#include "../core/validator.h"
-#include "../core/evaluate_system.h"
+#include "../core/move_ordering.h"
 #include "omp.h"
 
 #define MAX_CHILDREN 64 // langkah legal maksimal per posisi
@@ -18,7 +16,7 @@ typedef struct tElmtTree {
     address children[MAX_CHILDREN];
     int jumlahAnak;
     int kedalaman;
-} ElmtTree; // Renamed from tElmtTree to ElmtTree for clarity in struct definition
+} ElmtTree;
 
 typedef struct {
 	address root;
@@ -27,7 +25,8 @@ typedef struct {
 	boolean isMaximizingPlayer;
 } GameTree;
 
-void freeTree(address node);
+// Intuk membebaskan isi dari tree serta killerMove
+void freeTree(address node, Move* killerMoves);
 
 // Checks if the GameTree is empty
 boolean isEmptyTree(GameTree X);

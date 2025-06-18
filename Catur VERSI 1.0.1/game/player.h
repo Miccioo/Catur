@@ -10,7 +10,7 @@ typedef struct {
     char nama[MAX_NAMA];
     WarnaBidak warna;
     int giliran;  // 0 = bukan giliran, 1 = giliran
-    int skor;
+    int skor; // Nilai bidak yang masih ada
 } Player;
 
 // Fungsi untuk inisialisasi player

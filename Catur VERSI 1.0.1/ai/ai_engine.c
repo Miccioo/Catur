@@ -1,11 +1,12 @@
 #include "ai_engine.h"
 
-void freeTree(address node) {
+void freeTree(address node, Move* killerMoves) {
     if (!node) return;
     for (int i = 0; i < node->jumlahAnak; i++) {
-        freeTree(node->children[i]);
+        freeTree(node->children[i], killerMoves);
     }
     free(node);
+    free(killerMoves);
 }
 
 address createNode(GameState* state, Move langkah, address parent, int kedalaman) {
@@ -26,9 +27,11 @@ address createNode(GameState* state, Move langkah, address parent, int kedalaman
 
 void expandNode(address node, GameTree* tree, Move* killerMoves) {
     if (node->kedalaman >= tree->maxKedalaman) return;
+    
+    int numValidMoves;
 
     Move* langkahList = generateAllValidMoves(node->state.papan, node->state.giliran);
-    // orderMoves(langkahList, MAX_MOVES, &node->state, killerMoves);
+//    orderMoves(langkahList, numValidMoves, &node->state, killerMoves);
 
     for (int i = 0; i < MAX_MOVES && langkahList[i].from.row != -1; i++) {
         GameState newState = node->state;
@@ -49,7 +52,7 @@ GameTree* createGameTree(GameState* rootState, int kedalamanMaks, boolean isMaxi
     tree->maxKedalaman = kedalamanMaks;
     tree->jumlahNodeSekarang = 1;
     tree->isMaximizingPlayer = isMaximizing;
-    Move* killerMoves;
+    Move* killerMoves = (Move*)calloc(kedalamanMaks, sizeof(Move));
 
     expandNode(tree->root, tree, killerMoves);
     return tree;

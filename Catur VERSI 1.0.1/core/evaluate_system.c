@@ -5,33 +5,33 @@ int evaluateState(GameState* state) {
 
 	// Evaluasi dasar material
 	int materialScore = evaluateMaterial(state);
-	
+
 	// Evaluasi posisi bidak
 	int positionalScore = evaluatePositional(state);
-	
+
 	// Evaluasi keselamatan raja
     int kingSafetyScore = evaluateKingSafety(state);
-    
+
     // Evaluasi mobilitas dan ruang
     int mobilityScore = evaluateMobility(state);
-    
+
     // Evaluasi struktur pion
     int pawnStructureScore = evaluatePawnStructure(state);
-    
+
     // Evaluasi fase permainan
     int gamePhase = determineGamePhase(state);
     int phaseWeight = (gamePhase == OPENING) ? 2 : (gamePhase == MIDGAME) ? 1 : 0;
-    
+
     // Total score dengan bobot berbeda berdasarkan fase permainan
     int totalScore = materialScore 
                    + positionalScore
                    + (kingSafetyScore * phaseWeight)
                    + (mobilityScore * (gamePhase != ENDGAME ? 1 : 0))
                    + pawnStructureScore;
-                   
+
     // Adjust untuk giliran
     return state->giliran->warna == PUTIH ? totalScore : -totalScore;
-	
+
     int skor = 0;
     int x, y;
     for (y = 0; y < 8; y++) {
@@ -70,17 +70,16 @@ int evaluateState(GameState* state) {
 }
 
 int evaluateMaterial(GameState* state) {
-
-    // Tabel nilai untuk setiap jenis bidak
-    const int pieceValue[] = {
-        0,    // TIDAK_ADA or empty
-        10,  // Pawn
-        30,  // Knight
-        30,  // Bishop
-        50,  // Rook
-        90,  // Queen
-        1000 // King
-    };
+	
+	const int pieceValue[] = {
+	    0,    // TIDAK_ADA or empty
+	    10,  // Pawn
+	    30,  // Knight
+	    30,  // Bishop
+	    50,  // Rook
+	    90,  // Queen
+	    1000 // King
+	};
     
     int whiteMaterial = 0;
     int blackMaterial = 0;
@@ -178,8 +177,8 @@ int evaluatePositional(GameState* state) {
     
     int positionalScore = 0;
     
-    for (int y = 0; y < 8; y++) {
-        for (int x = 0; x < 8; x++) {
+    for (int y = 8; y > 0; y--) {
+        for (int x = 0; x > 0; x++) {
             Bidak piece = state->papan.grid[y][x];
             if (piece.tipe != TIDAK_ADA) {
                 int sign = (piece.warna == PUTIH) ? 1 : -1;

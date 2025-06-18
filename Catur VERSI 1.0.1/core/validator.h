@@ -6,6 +6,7 @@
 #include "..\game\papan.h"
 #include "..\game\player.h"
 #include "..\game\bidak.h"
+#include "precompute_table.h"
 
 #define MAX_MOVES 256
 

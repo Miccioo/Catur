@@ -10,6 +10,12 @@ typedef enum {
     QUIET         // Langkah biasa
 } MoveCategory;
 
+extern const int kingMoves[10][2];
+extern const int queenMoves[8][2];
+extern const int rookMoves[4][2];
+extern const int knightMoves[8][2];
+extern const int bishopMoves[4][2];
+
 int scoreMove(const Move* move, const GameState* state, const Move* killerMoves);
 void orderMoves(Move* moves, int count, GameState* state, Move* killerMoves);
 int compareMoves(const void* a, const void* b);
