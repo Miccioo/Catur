@@ -27,6 +27,8 @@ typedef struct {
 	int passed;
 } PionAnalyze;
 
+extern const int pieceValue[7];
+
 /** 
  * Evaluasi keadaan untuk dihitung dalam algoritma minimax
  */

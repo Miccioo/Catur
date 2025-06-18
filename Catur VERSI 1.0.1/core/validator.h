@@ -17,7 +17,7 @@ boolean isPathClear(Papan papan, Position from, Position to);
 boolean isValidMove(Papan papan, Move* move, Player* currentPlayer);
 
 // Fungsi untuk generate semua gerakan valid untuk player saat ini
-Move* generateAllValidMoves(Papan papan, Player* currentPlayer);
+Move* generateAllValidMoves(MoveList *list, Papan papan, Player* currentPlayer);
 
 int countLegalMoves(Papan papan, int baris, int kolom, Player* currentPlayer);
 

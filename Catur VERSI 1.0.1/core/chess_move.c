@@ -151,7 +151,7 @@ void destroyList(MoveList* list) {
 }
 
 // Implementasi function utilitas
-void createMove(Move* move, int* count, Position from, Position to, TipeBidak piece) {
+void createMove(Move* move, Position from, Position to, TipeBidak piece) {
     move->from = from; 
     move->to = to;
     move->bidak = piece;
@@ -160,9 +160,6 @@ void createMove(Move* move, int* count, Position from, Position to, TipeBidak pi
     move->isCheckmate = false;
     move->isFromTT = false; // Default
     move->score = 0; // Default score
-    if (count != NULL) {
-        (*count)++;
-    }
 }
 
 void printMove(Move move) {

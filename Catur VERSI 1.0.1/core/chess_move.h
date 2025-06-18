@@ -57,7 +57,7 @@ void clearList(MoveList* list);
 void destroyList(MoveList* list);
 
 // Function untuk utilitas
-void createMove(Move *move, int* count, Position from, Position to, TipeBidak piece);
+void createMove(Move *move, Position from, Position to, TipeBidak piece);
 void printMove(Move move);
 
 #endif // CHESS_MOVE_H 

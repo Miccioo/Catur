@@ -25,12 +25,12 @@ address createNode(GameState* state, Move langkah, address parent, int kedalaman
     return newNode;
 }
 
-void expandNode(address node, GameTree* tree, Move* killerMoves) {
+void expandNode(MoveList *list, address node, GameTree* tree, Move* killerMoves) {
     if (node->kedalaman >= tree->maxKedalaman) return;
     
     int numValidMoves;
 
-    Move* langkahList = generateAllValidMoves(node->state.papan, node->state.giliran);
+    Move* langkahList = generateAllValidMoves(list, node->state.papan, node->state.giliran);
 //    orderMoves(langkahList, numValidMoves, &node->state, killerMoves);
 
     for (int i = 0; i < MAX_MOVES && langkahList[i].from.row != -1; i++) {
@@ -41,7 +41,7 @@ void expandNode(address node, GameTree* tree, Move* killerMoves) {
         node->children[node->jumlahAnak++] = child;
         tree->jumlahNodeSekarang++;
 
-        expandNode(child, tree, killerMoves);
+        expandNode(list, child, tree, killerMoves);
     }
     free(langkahList); // Hindari memory leak
 }
@@ -52,9 +52,11 @@ GameTree* createGameTree(GameState* rootState, int kedalamanMaks, boolean isMaxi
     tree->maxKedalaman = kedalamanMaks;
     tree->jumlahNodeSekarang = 1;
     tree->isMaximizingPlayer = isMaximizing;
+    
     Move* killerMoves = (Move*)calloc(kedalamanMaks, sizeof(Move));
+    MoveList *list = createMoveList();
 
-    expandNode(tree->root, tree, killerMoves);
+    expandNode(list, tree->root, tree, killerMoves);
     return tree;
 }
 

@@ -1,5 +1,14 @@
 #include "evaluate_system.h"
 
+const int pieceValue[7] = {
+    0,    // TIDAK_ADA or empty
+    10,  // Pawn
+    30,  // Knight
+    30,  // Bishop
+    50,  // Rook
+    90,  // Queen
+    1000 // King
+};
 
 int evaluateState(GameState* state) {
 
@@ -70,16 +79,6 @@ int evaluateState(GameState* state) {
 }
 
 int evaluateMaterial(GameState* state) {
-	
-	const int pieceValue[] = {
-	    0,    // TIDAK_ADA or empty
-	    10,  // Pawn
-	    30,  // Knight
-	    30,  // Bishop
-	    50,  // Rook
-	    90,  // Queen
-	    1000 // King
-	};
     
     int whiteMaterial = 0;
     int blackMaterial = 0;

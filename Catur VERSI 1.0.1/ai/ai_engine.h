@@ -36,6 +36,8 @@ GameTree* createGameTree(GameState* rootState, int maxKedalaman, boolean isMaxim
 // Creates and initializes a single node for the game tree.
 address createNode(GameState* state, Move langkah, address parent, int kedalaman);
 
+void expandNode(MoveList *list, address node, GameTree* tree, Move* killerMoves);
+
 int minimax(address node, int depth, int alpha, int beta, boolean isMaximizingPlayer, Move* killerMoves);
 
 Move getBestMove(GameTree* tree);
