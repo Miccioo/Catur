@@ -30,7 +30,7 @@ void expandNode(MoveList *list, address node, GameTree* tree, Move* killerMoves)
     
     int numValidMoves;
 
-    Move* langkahList = generateAllValidMoves(list, node->state.papan, node->state.giliran);
+    Move* langkahList = generateAllValidMoves(list, &node->state.papan, node->state.giliran);
 //    orderMoves(langkahList, numValidMoves, &node->state, killerMoves);
 
     for (int i = 0; i < MAX_MOVES && langkahList[i].from.row != -1; i++) {

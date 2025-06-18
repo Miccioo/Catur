@@ -101,7 +101,7 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
     return false;
 }
 
-Move* generateAllValidMoves(MoveList *list, Papan papan, Player* currentPlayer) {
+Move* generateAllValidMoves(MoveList *list, Papan *papan, Player* currentPlayer) {
 	if (list == NULL) return NULL;
 	
 	Move *moves = (Move*)calloc(MAX_MOVES, sizeof(Move));
@@ -113,33 +113,33 @@ Move* generateAllValidMoves(MoveList *list, Papan papan, Player* currentPlayer) 
 	int row, col;
     for (col = 0; col < 8; col++) {
         for (row = 0; row < 8; row++) {
-            Bidak piece = getBidakAt(papan, col, row);
+            Bidak piece = getBidakAt(*(papan), col, row);
             if (piece.id == -1 || piece.warna != currentPlayer->warna) continue;
 			Position pos = {col, row};
 			
 			switch (piece.tipe) {
 				case PION:
-					generatePawnMoves(pos, list, moves, currentPlayer, &papan);
+					generatePawnMoves(pos, list, moves, currentPlayer, papan);
 					break;
 					
 				case BENTENG:
-					generateRookMoves(pos, list, moves, currentPlayer, &papan);
+					generateRookMoves(pos, list, moves, currentPlayer, papan);
 					break;
 					
 				case KUDA:
-					generateKnightMoves(pos, list, moves, currentPlayer, &papan);
+					generateKnightMoves(pos, list, moves, currentPlayer, papan);
 					break;
 					
 				case GAJAH:
-					generateBishopMoves(pos, list, moves, currentPlayer, &papan);
+					generateBishopMoves(pos, list, moves, currentPlayer, papan);
 					break;
 					
 				case MENTERI:
-					generateQueenMoves(pos, list, moves, currentPlayer, &papan);
+					generateQueenMoves(pos, list, moves, currentPlayer, papan);
 					break;
 					
 				case RAJA:
-					generateKingMoves(pos, list, moves, currentPlayer, &papan);
+					generateKingMoves(pos, list, moves, currentPlayer, papan);
 					break;
 					
 			}
@@ -170,8 +170,10 @@ Move* generateAllValidMoves(MoveList *list, Papan papan, Player* currentPlayer) 
         }
     }
 
-    moves[list->size].bidak = TIDAK_ADA;
-    return moves;
+    if (list->size >= MAX_MOVES - 1) {
+		moves[list->size].bidak = TIDAK_ADA;
+		return moves;
+	}
 }
 
 int countLegalMoves(Papan papan, int baris, int kolom, Player* currentPlayer) {
