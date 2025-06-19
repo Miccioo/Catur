@@ -78,7 +78,7 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
                 return true;
             }
             // En Passant
-            break; // Jika tidak ada kondisi pion yang terpenuhi, lanjut ke return false di akhir fungsi
+            break;
         }
         case BENTENG: // Rook
             return (dx == 0 || dy == 0) && // Bergerak horizontal atau vertikal
@@ -101,80 +101,110 @@ boolean isValidMove(Papan papan, Move* move, Player* currentPlayer) {
     return false;
 }
 
-Move* generateAllValidMoves(MoveList *list, Papan *papan, Player* currentPlayer) {
-	if (list == NULL) return NULL;
-	
-	Move *moves = (Move*)calloc(MAX_MOVES, sizeof(Move));
-	
-	if (moves == NULL) return NULL;
-    
-    list->size = 0;
-	
-	int row, col;
-    for (col = 0; col < 8; col++) {
-        for (row = 0; row < 8; row++) {
-            Bidak piece = getBidakAt(*(papan), col, row);
-            if (piece.id == -1 || piece.warna != currentPlayer->warna) continue;
-			Position pos = {col, row};
-			
-			switch (piece.tipe) {
-				case PION:
-					generatePawnMoves(pos, list, moves, currentPlayer, papan);
-					break;
-					
-				case BENTENG:
-					generateRookMoves(pos, list, moves, currentPlayer, papan);
-					break;
-					
-				case KUDA:
-					generateKnightMoves(pos, list, moves, currentPlayer, papan);
-					break;
-					
-				case GAJAH:
-					generateBishopMoves(pos, list, moves, currentPlayer, papan);
-					break;
-					
-				case MENTERI:
-					generateQueenMoves(pos, list, moves, currentPlayer, papan);
-					break;
-					
-				case RAJA:
-					generateKingMoves(pos, list, moves, currentPlayer, papan);
-					break;
-					
-			}
-			if (list->size >= MAX_MOVES - 1) {
-				moves[list->size].bidak = TIDAK_ADA;
-				return moves;
-			}
-			
-			
-//            for (toRow = 0; toRow < 8; toRow++) {
-//                for (toCol = 0; toCol < 8; toCol++) {
-//                	
-//                    Move currentMove; 
-//                    createMove(&currentMove, &count,
-//                               (Position){row, col}, 
-//                               (Position){toRow, toCol},
-//                               piece.tipe);
-//                    
-//                    if (isValidMove(papan, &currentMove, currentPlayer)) {
-//                        moves[count++] = currentMove; // Simpan struct Move ke array
-//                        if (count >= MAX_MOVES - 1) {
-//                            moves[count].bidak = '\0'; // Mark end of moves
-//                            return moves;
-//                        }
-//                    }
-//                }
-//            }
+void generateAllValidMoves(MoveList *list, Papan *papan, Player* currentPlayer) { //
+    if (list == NULL) return; //
+
+    clearList(list); // Clear previous moves from the list
+
+    int row, col; //
+    for (row = 0; row < 8; row++) { //
+        for (col = 0; col < 8; col++) { //
+            Bidak piece = getBidakAt(*(papan), col, row); //
+            if (piece.id == -1 || piece.warna != currentPlayer->warna) continue; //
+            Position pos = {row, col}; //
+            
+            switch (piece.tipe) { //
+                case PION:
+                    generatePawnMoves(pos, list, currentPlayer, papan); //
+                    break;
+                    
+                case BENTENG:
+                    generateRookMoves(pos, list, currentPlayer, papan); //
+                    break;
+                    
+                case KUDA:
+                    generateKnightMoves(pos, list, currentPlayer, papan); //
+                    break;
+                    
+                case GAJAH:
+                    generateBishopMoves(pos, list, currentPlayer, papan); //
+                    break;
+                    
+                case MENTERI:
+                    generateQueenMoves(pos, list, currentPlayer, papan); //
+                    break;
+                    
+                case RAJA:
+                    generateKingMoves(pos, list, currentPlayer, papan); //
+                    break;
+            }
         }
     }
-
-    if (list->size >= MAX_MOVES - 1) {
-		moves[list->size].bidak = TIDAK_ADA;
-		return moves;
-	}
 }
+
+//Move* generateAllValidMoves(MoveList *list, Papan *papan, Player* currentPlayer) {
+//	if (list == NULL) return NULL;
+//	
+//	Move *moves = (Move*)calloc(MAX_MOVES, sizeof(Move));
+//	
+//	if (moves == NULL) return NULL;
+//    
+//    list->size = 0;
+//	
+//	int row, col;
+//    for (row = 0; row < 8; row++) {
+//        for (col = 0; col < 8; col++) {
+//            Bidak piece = getBidakAt(*(papan), col, row);
+//            if (piece.id == -1 || piece.warna != currentPlayer->warna) continue;
+//			Position pos = {row, col};
+//			
+//			// Debugging
+////			printf("Langkah yg ada: %d %d ", row, col);
+////			printf("Tipe Pion: ");
+////			const char* result = (piece.tipe == PION) ? "PION" : "BUKAN";
+////			printf("%s\n", result);
+////			getchar(); getchar();
+//			
+//			
+//			switch (piece.tipe) {
+//				case PION:
+//					generatePawnMoves(pos, list, currentPlayer, papan);
+//					break;
+//					
+//				case BENTENG:
+//					generateRookMoves(pos, list, currentPlayer, papan);
+//					break;
+//					
+//				case KUDA:
+//					generateKnightMoves(pos, list, currentPlayer, papan);
+//					break;
+//					
+//				case GAJAH:
+//					generateBishopMoves(pos, list, currentPlayer, papan);
+//					break;
+//					
+//				case MENTERI:
+//					generateQueenMoves(pos, list, currentPlayer, papan);
+//					break;
+//					
+//				case RAJA:
+//					generateKingMoves(pos, list, currentPlayer, papan);
+//					break;
+//					
+//			}
+//			
+//			if (list->size >= MAX_MOVES - 1) {
+//				moves[list->size].bidak = TIDAK_ADA;
+//				return moves;
+//			}
+//
+//    if (list->size >= MAX_MOVES - 1) {
+//		moves[list->size].bidak = TIDAK_ADA;
+//		return moves;
+//	}
+//
+//	return moves;
+//}
 
 int countLegalMoves(Papan papan, int baris, int kolom, Player* currentPlayer) {
 	int count = 0;

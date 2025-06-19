@@ -161,6 +161,7 @@ void pindahkanBidak(Papan *papan, Move* move) {
 }
 
 boolean isEmptyBidak(Papan* papan, int x, int y) {
+	if (!isValidSquare) return false;
 	return papan->grid[x][y].tipe == TIDAK_ADA;
 }
 

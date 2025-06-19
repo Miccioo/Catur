@@ -6,6 +6,8 @@
 #include "..\io\menu.h"
 #include "..\core\chess_move.h"
 #include "..\core\boolean.h"
+#include "../core/validator.h" // Untuk generateAllValidMoves, isSquareAttacked, findKingPosition
+
 
 #include <stdlib.h>
 #include <string.h>
@@ -15,13 +17,14 @@ typedef struct {
     Player* pemainPutih;
     Player* pemainHitam;
     Player* giliran;
-    MoveNode* history; // stack of moves
-    int skakPutih;
-    int skakHitam;
-    int skakmat;
-    int remis;
-    int langkahTanpaGerak;
-    Bidak* bidakEnPassant;
+    MoveNode* history; // stack of moves (linked list based stack)
+    int skakPutih; // Flag: 1 jika Putih dalam skak, 0 jika tidak
+    int skakHitam; // Flag: 1 jika Hitam dalam skak, 0 jika tidak
+    int skakmat; // Flag: 1 jika skakmat, 0 jika tidak
+    int remis; // Flag: 1 jika remis, 0 jika tidak
+    int langkahTanpaGerak; // Untuk aturan 50-langkah
+    // Position enPassantTargetSquare; // Lebih baik menggunakan posisi untuk en passant
+    Bidak* bidakEnPassant; // Jika tetap menggunakan pointer, pastikan validasinya ketat
 } GameState;
 
 // Inisialisasi awal game (reset papan, setup pemain, set giliran pertama)
@@ -41,5 +44,10 @@ void applyMove(GameState* state, Move* move);
 
 // Undo langkah terakhir
 void undoMove(GameState* state);
+
+// Fungsi tambahan untuk validasi game state
+boolean isKingInCheck(GameState* state, WarnaBidak kingColor);
+boolean hasLegalMoves(GameState* state, Player* player);
+
 
 #endif

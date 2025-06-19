@@ -26,7 +26,7 @@ typedef struct {
 } GameTree;
 
 // Intuk membebaskan isi dari tree serta killerMove
-void freeTree(address node, Move* killerMoves);
+void freeTree(address node);
 
 // Checks if the GameTree is empty
 boolean isEmptyTree(GameTree X);
