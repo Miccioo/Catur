@@ -1,0 +1,64 @@
+# Project: ChessGame
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
+WINDRES  = windres.exe
+OBJ      = main.o controller/chessController.o ai/ai_engine.o core/chess_move.o core/validator.o game/bidak.o game/Gamestate.o game/papan.o game/player.o io/color.o io/menu.o user/account.o home/home.o
+LINKOBJ  = main.o controller/chessController.o ai/ai_engine.o core/chess_move.o core/validator.o game/bidak.o game/Gamestate.o game/papan.o game/player.o io/color.o io/menu.o user/account.o home/home.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -L"C:/SDL3/SDL3-3.2.14/x86_64-w64-mingw32/lib" -L"C:/SDL3/SDL3_image-3.2.4/x86_64-w64-mingw32/lib" -static-libgcc -g3
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/SDL3/SDL3-3.2.14/x86_64-w64-mingw32/include" -I"C:/SDL3/SDL3_image-3.2.4/x86_64-w64-mingw32/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = ChessGame.exe
+CXXFLAGS = $(CXXINCS) -g3 -g
+CFLAGS   = $(INCS) -g3 -g
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.c
+	$(CC) -c main.c -o main.o $(CFLAGS)
+
+controller/chessController.o: controller/chessController.c
+	$(CC) -c controller/chessController.c -o controller/chessController.o $(CFLAGS)
+
+ai/ai_engine.o: ai/ai_engine.c
+	$(CC) -c ai/ai_engine.c -o ai/ai_engine.o $(CFLAGS)
+
+core/chess_move.o: core/chess_move.c
+	$(CC) -c core/chess_move.c -o core/chess_move.o $(CFLAGS)
+
+core/validator.o: core/validator.c
+	$(CC) -c core/validator.c -o core/validator.o $(CFLAGS)
+
+game/bidak.o: game/bidak.c
+	$(CC) -c game/bidak.c -o game/bidak.o $(CFLAGS)
+
+game/Gamestate.o: game/Gamestate.c
+	$(CC) -c game/Gamestate.c -o game/Gamestate.o $(CFLAGS)
+
+game/papan.o: game/papan.c
+	$(CC) -c game/papan.c -o game/papan.o $(CFLAGS)
+
+game/player.o: game/player.c
+	$(CC) -c game/player.c -o game/player.o $(CFLAGS)
+
+io/color.o: io/color.c
+	$(CC) -c io/color.c -o io/color.o $(CFLAGS)
+
+io/menu.o: io/menu.c
+	$(CC) -c io/menu.c -o io/menu.o $(CFLAGS)
+
+user/account.o: user/account.c
+	$(CC) -c user/account.c -o user/account.o $(CFLAGS)
+
+home/home.o: home/home.c
+	$(CC) -c home/home.c -o home/home.o $(CFLAGS)
