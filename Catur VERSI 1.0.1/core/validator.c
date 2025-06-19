@@ -135,10 +135,131 @@ boolean isPseudoLegalMove(Papan papan, Move* move, Player* currentPlayer, Bidak*
             }
             break;
         } 
+        
+        // --- LOGIKA PERGERAKAN UNTUK BIDAK EVOLVE ---
+        case PION_BERAT: { // Pion + Pion
+            int direction = (piece.warna == PUTIH) ? -1 : 1;
+            // Bergerak 1 langkah maju (pion normal)
+            if (dx == 0 && dy == direction && isTargetEmpty) {
+                return true;
+            }
+            // Menyerang diagonal (pion normal)
+            if (abs(dx) == 1 && dy == direction && isTargetOpponentPiece) {
+                return true;
+            }
+            // Pion Berat bisa bergerak 1 kotak ke samping (ortogonal)
+            if ((abs(dx) == 1 && dy == 0) && (isTargetEmpty || isTargetOpponentPiece)) {
+                return true;
+            }
+            break;
+        }
+
+        case KSATRIA_PIONIR: // Pion + Kuda
+        case KUDA_BERPELINDUNG: { // Kuda + Pion
+            int direction = (piece.warna == PUTIH) ? -1 : 1;
+            // Gerakan Kuda
+            if ((abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2)) {
+                return true;
+            }
+            // Gerakan Pion (maju 1 kotak)
+            if (dx == 0 && dy == direction && isTargetEmpty) {
+                return true;
+            }
+            // Gerakan Pion (serang diagonal)
+            if (abs(dx) == 1 && dy == direction && isTargetOpponentPiece) {
+                return true;
+            }
+            break;
+        }
+
+        case GAJAH_PENJAGA: // Pion + Gajah
+        case GAJAH_BIJAKSANA: { // Gajah + Pion
+            int direction = (piece.warna == PUTIH) ? -1 : 1;
+            // Gerakan Gajah
+            if (abs(dx) == abs(dy) && isPathClear(papan, move->from, move->to)) {
+                return true;
+            }
+            // Gerakan Pion (maju 1 kotak)
+            if (dx == 0 && dy == direction && isTargetEmpty) {
+                return true;
+            }
+            // Gerakan Pion (serang diagonal)
+            if (abs(dx) == 1 && dy == direction && isTargetOpponentPiece) {
+                return true;
+            }
+            break;
+        }
+
+        case BENTENG_PENYERBU: // Pion + Benteng
+        case BENTENG_PIONIR: { // Benteng + Pion
+            int direction = (piece.warna == PUTIH) ? -1 : 1;
+            // Gerakan Benteng
+            if ((dx == 0 || dy == 0) && isPathClear(papan, move->from, move->to)) {
+                return true;
+            }
+            // Gerakan Pion (maju 1 kotak)
+            if (dx == 0 && dy == direction && isTargetEmpty) {
+                return true;
+            }
+            // Gerakan Pion (serang diagonal)
+            if (abs(dx) == 1 && dy == direction && isTargetOpponentPiece) {
+                return true;
+            }
+            break;
+        }
+        
+        case KSATRIA_GANDA: { // Kuda + Kuda
+            // Gerakan Kuda
+            if ((abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2)) {
+                return true;
+            }
+            // Tambahan: Gerakan 1 kotak lurus ke segala arah (ortogonal)
+            if (((abs(dx) == 1 && dy == 0) || (dx == 0 && abs(dy) == 1)) && (isTargetEmpty || isTargetOpponentPiece)) {
+                 return true;
+            }
+            break;
+        }
+
+        case KOMANDAN_MEDAN: // Kuda + Gajah
+        case PENGUASA_GARIS_DEPAN: { // Gajah + Kuda
+            // Gerakan Kuda
+            if ((abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2)) {
+                return true;
+            }
+            // Gerakan Gajah
+            if (abs(dx) == abs(dy) && isPathClear(papan, move->from, move->to)) {
+                return true;
+            }
+            break;
+        }
+
+        case GAJAH_AGUNG: { // Gajah + Gajah
+            // Gerakan Gajah
+            if (abs(dx) == abs(dy) && isPathClear(papan, move->from, move->to)) {
+                return true;
+            }
+            // Tambahan: Gerakan 1 kotak lurus ke segala arah (ortogonal)
+            if (((abs(dx) == 1 && dy == 0) || (dx == 0 && abs(dy) == 1)) && (isTargetEmpty || isTargetOpponentPiece)) {
+                 return true;
+            }
+            break;
+        }
+
+        // --- LOGIKA PERGERAKAN UNTUK BIDAK ZOMBIE --- (Belum ada, akan ditambah di masa depan)
+        case ZOMBIE_PION:
+        case ZOMBIE_BENTENG:
+        case ZOMBIE_KUDA:
+        case ZOMBIE_GAJAH:
+        case ZOMBIE_MENTERI:
+        case ZOMBIE_RAJA:
+            // Untuk saat ini, bidak zombie tidak bisa bergerak atau memiliki gerakan sangat terbatas
+            return false; // Contoh: bidak zombie tidak bisa bergerak
+            break;
+
         case TIDAK_ADA: 
             return false; 
     }
-    return false; 
+    return false; // Mengembalikan false jika tidak ada aturan yang cocok.
 }
 
 
@@ -170,7 +291,7 @@ Move* generateAllPseudoLegalMoves(Papan papan, Player* currentPlayer, Bidak* enP
                     if (isPseudoLegalMove(papan, &currentMove, currentPlayer, enPassantTargetPawn)) {
                         moves[count++] = currentMove;
                         if (count >= MAX_MOVES - 1) { 
-                            moves[count].bidak = TIDAK_ADA; 
+                            moves[count].bidak = TIDAK_ADA; // Tandai akhir array
                             return moves;
                         }
                     }
@@ -179,7 +300,7 @@ Move* generateAllPseudoLegalMoves(Papan papan, Player* currentPlayer, Bidak* enP
         }
     }
 
-    moves[count].bidak = TIDAK_ADA; 
+    moves[count].bidak = TIDAK_ADA; // Pastikan array selalu diakhiri dengan TIDAK_ADA
     return moves;
 }
 
@@ -219,13 +340,70 @@ boolean isSquareAttacked(Papan papan, Position targetPos, WarnaBidak attackingCo
                     case RAJA:
                         if (abs(dx) <= 1 && abs(dy) <= 1 && (abs(dx) > 0 || abs(dy) > 0)) return true;
                         break;
-                    case TIDAK_ADA: break; 
-                }
-            }
-        }
-    }
-    return false;
-}
+                    
+                    // --- LOGIKA UNTUK BIDAK EVOLVE SEBAGAI PENYERANG ---
+                    // Ini penting agar bidak evolve bisa men-skak raja
+                    case PION_BERAT: {
+                        int direction = (attackerPiece.warna == PUTIH) ? -1 : 1;
+                        if (abs(dx) == 1 && dy == direction) return true; // Serang diagonal seperti pion
+                        if ((abs(dx) == 1 && dy == 0)) return true; // Serang samping
+                        break;
+                    }
+                    case KSATRIA_PIONIR:
+                    case KUDA_BERPELINDUNG: {
+                        int direction = (attackerPiece.warna == PUTIH) ? -1 : 1;
+                        if ((abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2)) return true; // Gerak Kuda
+                        if (abs(dx) == 1 && dy == direction) return true; // Serang diagonal Pion
+                        break;
+                    }
+                    case GAJAH_PENJAGA:
+                    case GAJAH_BIJAKSANA: {
+                        int direction = (attackerPiece.warna == PUTIH) ? -1 : 1;
+                        if (abs(dx) == abs(dy) && isPathClear(papan, dummyMove.from, dummyMove.to)) return true; // Gerak Gajah
+                        if (abs(dx) == 1 && dy == direction) return true; // Serang diagonal Pion
+                        break;
+                    }
+                    case BENTENG_PENYERBU:
+                    case BENTENG_PIONIR: {
+                        int direction = (attackerPiece.warna == PUTIH) ? -1 : 1;
+                        if ((dx == 0 || dy == 0) && isPathClear(papan, dummyMove.from, dummyMove.to)) return true; // Gerak Benteng
+                        if (abs(dx) == 1 && dy == direction) return true; // Serang diagonal Pion
+                        break;
+                    }
+                    case KSATRIA_GANDA: {
+                        if ((abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2)) return true; // Gerak Kuda
+                        if (((abs(dx) == 1 && dy == 0) || (dx == 0 && abs(dy) == 1))) return true; // Gerak 1 kotak ortogonal
+                        break;
+                    }
+                    case KOMANDAN_MEDAN:
+                    case PENGUASA_GARIS_DEPAN: {
+                        if ((abs(dx) == 2 && abs(dy) == 1) || (abs(dx) == 1 && abs(dy) == 2)) return true; // Gerak Kuda
+                        if (abs(dx) == abs(dy) && isPathClear(papan, dummyMove.from, dummyMove.to)) return true; // Gerak Gajah
+                        break;
+                    }
+                    case GAJAH_AGUNG: {
+                        if (abs(dx) == abs(dy) && isPathClear(papan, dummyMove.from, dummyMove.to)) return true; // Gerak Gajah
+                        if (((abs(dx) == 1 && dy == 0) || (dx == 0 && abs(dy) == 1))) return true; // Gerak 1 kotak ortogonal
+                        break;
+                    }
+                    // --- BIDAK ZOMBIE SEBAGAI PENYERANG (jika ada aturannya) ---
+                    // Saat ini mereka tidak bisa bergerak, jadi tidak akan ada di sini
+                    case ZOMBIE_PION:
+                    case ZOMBIE_BENTENG:
+                    case ZOMBIE_KUDA:
+                    case ZOMBIE_GAJAH:
+                    case ZOMBIE_MENTERI:
+                    case ZOMBIE_RAJA:
+                        // Bidak zombie saat ini tidak punya aturan pergerakan, jadi tidak bisa menyerang
+                        break;
+
+                    case TIDAK_ADA: break; // Ini adalah case terakhir untuk switch (attackerPiece.tipe)
+                } // Tutup switch (attackerPiece.tipe)
+            } // Tutup if (attackerPiece.id != -1 && attackerPiece.warna == attackingColor)
+        } // Tutup for (c = 0; c < 8; c++)
+    } // Tutup for (r = 0; r < 8; r++)
+    return false; // Kembali false jika tidak ada penyerang yang ditemukan
+} // Tutup fungsi isSquareAttacked
 
 boolean isKingInCheck(Papan papan, WarnaBidak kingColor, Position kingPos) {
     WarnaBidak opponentColor = (kingColor == PUTIH) ? HITAM : PUTIH;
@@ -240,6 +418,9 @@ boolean isLegalMove(void* state_ptr, Move* move) {
 
     Bidak pieceToMove = getBidakAt(tempState.papan, move->from.col, move->from.row);
 
+    // Simpan tipe asli bidak untuk undo nanti jika promosi (jika diperlukan untuk undo)
+    // TipeBidak originalPieceType = pieceToMove.tipe; 
+
     if (move->isEnPassant) {
         Bidak emptySquare; initBidak(&emptySquare, TIDAK_ADA, TANPA_WARNA, -1, -1, -1);
         tempState.papan.grid[move->from.row][move->to.col] = emptySquare; 
@@ -251,9 +432,14 @@ boolean isLegalMove(void* state_ptr, Move* move) {
         }
     }
 
+    // Jika ada promosi, tipe bidak di tempState diubah
     if (move->promotionTo != TIDAK_ADA) {
         pieceToMove.tipe = move->promotionTo; 
     }
+
+    // Pastikan koordinat bidak diperbarui sebelum ditempatkan di tempState
+    pieceToMove.x = move->to.col;
+    pieceToMove.y = move->to.row;
 
     tempState.papan.grid[move->to.row][move->to.col] = pieceToMove; 
     Bidak emptySquareFrom; initBidak(&emptySquareFrom, TIDAK_ADA, TANPA_WARNA, -1, -1, -1);
@@ -262,20 +448,28 @@ boolean isLegalMove(void* state_ptr, Move* move) {
     if (move->isCastling) {
         Bidak rook;
         Position rookFrom, rookTo;
-        if (move->to.col == move->from.col + 2) { 
+        // Penentuan rookFrom dan rookTo harus konsisten dengan pindahkanBidak
+        // Ambil rook dari papan ASLI (state->papan) karena tempState sudah dimodifikasi
+        if (move->to.col == move->from.col + 2) { // Kingside
             rook = getBidakAt(state->papan, 7, move->from.row); 
             rookFrom = (Position){move->from.row, 7};
             rookTo = (Position){move->from.row, 5};
-        } else { 
+        } else { // Queenside
             rook = getBidakAt(state->papan, 0, move->from.row); 
             rookFrom = (Position){move->from.row, 0};
             rookTo = (Position){move->from.row, 3};
         }
+        
+        // Update koordinat rook untuk tempState
+        rook.x = rookTo.col;
+        rook.y = rookTo.row;
+
         tempState.papan.grid[rookTo.row][rookTo.col] = rook;
         Bidak emptyRookOriginal; initBidak(&emptyRookOriginal, TIDAK_ADA, TANPA_WARNA, -1, -1, -1);
         tempState.papan.grid[rookFrom.row][rookFrom.col] = emptyRookOriginal;
     }
-
+    
+    // Periksa apakah raja masih dalam skak setelah gerakan simulasi
     Position kingPosAfterMove = findKingPosition(tempState.papan, state->giliran->warna);
 
     return !isKingInCheck(tempState.papan, state->giliran->warna, kingPosAfterMove);
@@ -295,18 +489,19 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer, void* currentSta
     int legalCount = 0;
 
     if (pseudoLegalMoves == NULL) { 
-        legalMoves[0].bidak = TIDAK_ADA;
+        legalMoves[0].bidak = TIDAK_ADA; // Jika tidak ada pseudo-legal move, tandai kosong
         return legalMoves;
     }
 
     int i; 
     for (i = 0; pseudoLegalMoves[i].bidak != TIDAK_ADA; i++) {
+        // isLegalMove akan membuat salinan GameState, jadi tidak perlu khawatir mengubah state asli.
         if (isLegalMove(currentState, &pseudoLegalMoves[i])) { 
             legalMoves[legalCount++] = pseudoLegalMoves[i];
         }
     }
-    legalMoves[legalCount].bidak = TIDAK_ADA;
-    free(pseudoLegalMoves); 
+    legalMoves[legalCount].bidak = TIDAK_ADA; // Pastikan array selalu diakhiri
+    free(pseudoLegalMoves); // Bebaskan memori pseudo-legal moves
     return legalMoves;
 }
 
@@ -315,19 +510,24 @@ boolean isCheckmate(void* state_ptr) {
     GameState* state = (GameState*)state_ptr; // Cast back to GameState*
     Position currentKingPos = findKingPosition(state->papan, state->giliran->warna);
     
+    // Pastikan raja sedang di-skak sebelum memeriksa skakmat
+    if (!isKingInCheck(state->papan, state->giliran->warna, currentKingPos)) {
+        return false; // Bukan skakmat jika raja tidak dalam skak
+    }
+
     Move* allLegalMoves = generateAllValidMoves(state->papan, state->giliran, state, state->enPassantTargetPawn); 
 
     boolean noLegalMoves = true;
     if (allLegalMoves != NULL) {
-        if (allLegalMoves[0].bidak != TIDAK_ADA) {
+        if (allLegalMoves[0].bidak != TIDAK_ADA) { // Periksa apakah ada langkah legal
             noLegalMoves = false; 
         }
-        free(allLegalMoves); 
+        free(allLegalMoves); // Pastikan memori dibebaskan
     }
     
     if (noLegalMoves) {
-        return true; 
+        return true; // Jika raja di-skak dan tidak ada langkah legal, itu skakmat
     }
 
-    return false; 
+    return false; // Jika ada langkah legal, bukan skakmat
 }

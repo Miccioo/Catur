@@ -29,15 +29,14 @@ typedef enum {
     // New Zombie Piece Types
     ZOMBIE_PION,    //
     ZOMBIE_BENTENG, //
-    ZOMBIE_GAJAH,   //
     ZOMBIE_KUDA,    //
+    ZOMBIE_GAJAH,   // Dulu ada ZOMBIE_GAJAH_Z, sekarang disatukan
     ZOMBIE_MENTERI, //
     ZOMBIE_RAJA,    //
 
     TIDAK_ADA, // Empty square
-    TOTAL_BIDAK_TYPES // Ini harus menjadi entri terakhir dan menghitung total tipe
+    TOTAL_BIDAK_TYPES // Add this to count total types
 } TipeBidak;
-
 
 // Enum for piece color
 typedef enum {
@@ -62,7 +61,7 @@ typedef struct {
 #define NILAI_KUDA 3
 #define NILAI_GAJAH 3
 #define NILAI_BENTENG 5
-#define NILAI_MENTERI 9 // Menteri memiliki nilai tinggi, bisa jadi gabungan Raja dan bidak lain
+#define NILAI_MENTERI 9 
 #define NILAI_RAJA 100 // Raja tidak bisa digabungkan, nilai sangat tinggi
 
 // Function to initialize a piece
@@ -71,7 +70,7 @@ void initBidak(Bidak *bidak, TipeBidak tipe, WarnaBidak warna, int x, int y, int
 // Function to print piece info (debugging)
 void printBidak(Bidak bidak);
 
-// Function to print piece with color
+// Fungsi printBidakColor sekarang menerima koordinat papan (board_row, board_col)
 void printBidakColor(Bidak b, int row_visual, int board_row, int board_col);
 
 // New function: Returns the visual line string for a piece
