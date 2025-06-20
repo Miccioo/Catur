@@ -276,7 +276,7 @@ boolean isLegalMove(void* state_ptr, Move* move) {
         tempState.papan.grid[rookFrom.row][rookFrom.col] = emptyRookOriginal;
     }
 
-    Position kingPosAfterMove = findKingPosition(tempState.papan, state->giliran->warna);
+    Position kingPosAfterMove = findKingPosition(&tempState.papan, state->giliran->warna);
 
     return !isKingInCheck(tempState.papan, state->giliran->warna, kingPosAfterMove);
 }
@@ -313,7 +313,7 @@ Move* generateAllValidMoves(Papan papan, Player* currentPlayer, void* currentSta
 // Implement isCheckmate using GameState* and casting
 boolean isCheckmate(void* state_ptr) {
     GameState* state = (GameState*)state_ptr; // Cast back to GameState*
-    Position currentKingPos = findKingPosition(state->papan, state->giliran->warna);
+    Position currentKingPos = findKingPosition(&state->papan, state->giliran->warna);
     
     Move* allLegalMoves = generateAllValidMoves(state->papan, state->giliran, state, state->enPassantTargetPawn); 
 
@@ -330,4 +330,49 @@ boolean isCheckmate(void* state_ptr) {
     }
 
     return false; 
+}
+
+int countLegalMoves(Papan papan, int x, int y, Player *player) {
+    int count = 0;
+    Bidak piece = getBidakAt(papan, x, y);
+
+    // If there's no piece or the piece doesn't belong to the current player, return 0
+    if (piece.id == -1 || piece.warna != player->warna) {
+        return 0;
+    }
+   
+    GameState dummyState;
+    dummyState.papan = papan;
+    dummyState.giliran = player;
+    dummyState.enPassantTargetPawn = NULL;
+
+    for (int toRow = 0; toRow < 8; toRow++) {
+        for (int toCol = 0; toCol < 8; toCol++) {
+            Move currentMove;
+            createMove(&currentMove,
+                       (Position){y, x},
+                       (Position){toRow, toCol},
+                       piece.tipe);
+
+            // Check if the move is pseudo-legal first
+            if (isPseudoLegalMove(papan, &currentMove, player, dummyState.enPassantTargetPawn)) {
+            	
+                if (isLegalMove(&dummyState, &currentMove)) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+Position findKingPosition(Papan *papan, WarnaBidak warna) {
+    for (int y = 0; y < 8; y++) {
+        for (int x = 0; x < 8; x++) {
+            Bidak piece = papan->grid[y][x];
+            if (piece.tipe == RAJA && piece.warna == warna) return (Position){x, y};
+        }
+    }
+    
+    return (Position){-1, -1}; // Tidak ditemukan 
 }

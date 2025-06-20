@@ -19,4 +19,8 @@ void initPlayer(Player *player, char nama[MAX_NAMA], WarnaBidak warna);
 // Function to display player info
 void printPlayer(Player player);
 
+// Function to get score from player
+int getScorePutih(Player *putih, Player *hitam);
+int getScoreHitam(Player *putih, Player *hitam);
+
 #endif

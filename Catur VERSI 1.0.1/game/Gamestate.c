@@ -75,7 +75,7 @@ boolean isGameOver(GameState* state) {
     }
 
     // Pass `state` as the `currentState_ptr` parameter
-    Position kingPos = findKingPosition(state->papan, state->giliran->warna);
+    Position kingPos = findKingPosition(&state->papan, state->giliran->warna);
     if (!isKingInCheck(state->papan, state->giliran->warna, kingPos)) {
         Move* legalMoves = generateAllValidMoves(state->papan, state->giliran, state, state->enPassantTargetPawn);
         boolean hasNoLegalMoves = (legalMoves == NULL || legalMoves[0].bidak == TIDAK_ADA);
@@ -214,7 +214,7 @@ void undoMove(GameState* state) {
 void updateGameStatus(GameState* state) {
     if (state == NULL) return;
 
-    Position currentKingPos = findKingPosition(state->papan, state->giliran->warna);
+    Position currentKingPos = findKingPosition(&state->papan, state->giliran->warna);
 
     if (isKingInCheck(state->papan, state->giliran->warna, currentKingPos)) {
         if (state->giliran->warna == PUTIH) state->isWhiteKingInCheck = true;

@@ -202,17 +202,17 @@ boolean isEmptyBidak(Papan* papan, int x, int y) {
 	return papan->grid[y][x].tipe == TIDAK_ADA; // Access grid as [row][column]
 }
 
-Position findKingPosition(Papan papan, WarnaBidak kingColor) {
-    Position kingPos = {-1, -1}; // Default invalid position
-    int r, c; // Declared loop variables here for C89/ANSI C compatibility
-    for (r = 0; r < UKURAN_PAPAN; r++) {
-        for (c = 0; c < UKURAN_PAPAN; c++) {
-            Bidak b = getBidakAt(papan, c, r);
-            if (b.tipe == RAJA && b.warna == kingColor) {
-                kingPos = (Position){r, c};
-                return kingPos;
-            }
-        }
-    }
-    return kingPos; // Should ideally always find the king
-}
+//Position findKingPosition(Papan papan, WarnaBidak kingColor) {
+//    Position kingPos = {-1, -1}; // Default invalid position
+//    int r, c; // Declared loop variables here for C89/ANSI C compatibility
+//    for (r = 0; r < UKURAN_PAPAN; r++) {
+//        for (c = 0; c < UKURAN_PAPAN; c++) {
+//            Bidak b = getBidakAt(papan, c, r);
+//            if (b.tipe == RAJA && b.warna == kingColor) {
+//                kingPos = (Position){r, c};
+//                return kingPos;
+//            }
+//        }
+//    }
+//    return kingPos; // Should ideally always find the king
+//}

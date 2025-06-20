@@ -3,38 +3,38 @@
 #include "..\core\validator.h" // Include validator for generateAllValidMoves
 #include <limits.h> // For INT_MIN, INT_MAX
 
-int evaluateState(GameState* state) {
-    int score = 0;
-    int x, y;
-    for (y = 0; y < 8; y++) {
-        for (x = 0; x < 8; x++) {
-            Bidak b = state->papan.grid[y][x];
-            if (b.id != -1) {
-                // Basic scoring:
-                switch(b.tipe) {
-                    case PION: score += (b.warna == PUTIH) ? 100 : -100; break;
-                    case KUDA: case GAJAH: score += (b.warna == PUTIH) ? 300 : -300; break;
-                    case BENTENG: score += (b.warna == PUTIH) ? 500 : -500; break;
-                    case MENTERI: score += (b.warna == PUTIH) ? 900 : -900; break;
-                    case RAJA: score += (b.warna == PUTIH) ? 10000 : -10000; break; // High value for King
-                    default: break;
-                }
-                // Add bonus for controlling center, piece mobility, etc. (more advanced)
-            }
-        }
-    }
-    // Adjust score for check/checkmate
-    if (state->skakmat) {
-        if (state->giliran->warna == PUTIH) { // If it's white's turn and checkmate, black wins
-            score += INT_MIN / 2; // Very bad for white
-        } else { // If it's black's turn and checkmate, white wins
-            score += INT_MAX / 2; // Very good for white
-        }
-    } else if (state->remis) {
-        score = 0; // Draw is neutral
-    }
-    return score;
-}
+//int evaluateState(GameState* state) {
+//    int score = 0;
+//    int x, y;
+//    for (y = 0; y < 8; y++) {
+//        for (x = 0; x < 8; x++) {
+//            Bidak b = state->papan.grid[y][x];
+//            if (b.id != -1) {
+//                // Basic scoring:
+//                switch(b.tipe) {
+//                    case PION: score += (b.warna == PUTIH) ? 100 : -100; break;
+//                    case KUDA: case GAJAH: score += (b.warna == PUTIH) ? 300 : -300; break;
+//                    case BENTENG: score += (b.warna == PUTIH) ? 500 : -500; break;
+//                    case MENTERI: score += (b.warna == PUTIH) ? 900 : -900; break;
+//                    case RAJA: score += (b.warna == PUTIH) ? 10000 : -10000; break; // High value for King
+//                    default: break;
+//                }
+//                // Add bonus for controlling center, piece mobility, etc. (more advanced)
+//            }
+//        }
+//    }
+//    // Adjust score for check/checkmate
+//    if (state->skakmat) {
+//        if (state->giliran->warna == PUTIH) { // If it's white's turn and checkmate, black wins
+//            score += INT_MIN / 2; // Very bad for white
+//        } else { // If it's black's turn and checkmate, white wins
+//            score += INT_MAX / 2; // Very good for white
+//        }
+//    } else if (state->remis) {
+//        score = 0; // Draw is neutral
+//    }
+//    return score;
+//}
 
 address createNode(GameState* state, Move langkah, address parent, int kedalaman) {
     address newNode = (address) malloc(sizeof(ElmtTree));
@@ -102,9 +102,8 @@ void freeGameTreeNodes(address node) {
     free(node);
 }
 
-// Minimax algorithm implementation
-int minimax(address node, int depth, boolean isMaximizingPlayer) {
-    // If max depth reached OR a terminal node (checkmate/stalemate/no children)
+// Minimax with alpha beta pruning algorithm implementation
+int minimax(address node, int depth, boolean isMaximizingPlayer, int alpha, int beta) {
     if (depth == 0 || node->jumlahAnak == 0 || node->state.skakmat || node->state.remis) {
         return evaluateState(&node->state);
     }
@@ -113,19 +112,35 @@ int minimax(address node, int depth, boolean isMaximizingPlayer) {
         int maxEval = INT_MIN;
         int i;
         for (i = 0; i < node->jumlahAnak; i++) {
-            int eval = minimax(node->children[i], depth - 1, false);
-            if (eval > maxEval) maxEval = eval;
+            int eval = minimax(node->children[i], depth - 1, false, alpha, beta);
+            if (eval > maxEval) {
+                maxEval = eval;
+            }
+            if (maxEval > alpha) {
+                alpha = maxEval;
+            }
+            if (beta <= alpha) {
+                break; // Alpha-beta pruning
+            }
         }
-        node->value = maxEval; // Store best value in node for getBestMove
+        node->value = maxEval;
         return maxEval;
     } else { // Minimizing player
         int minEval = INT_MAX;
         int i;
         for (i = 0; i < node->jumlahAnak; i++) {
-            int eval = minimax(node->children[i], depth - 1, true);
-            if (eval < minEval) minEval = eval;
+            int eval = minimax(node->children[i], depth - 1, true, alpha, beta);
+            if (eval < minEval) {
+                minEval = eval;
+            }
+            if (minEval < beta) {
+                beta = minEval;
+            }
+            if (beta <= alpha) {
+                break; // Alpha-beta pruning
+            }
         }
-        node->value = minEval; // Store best value in node for getBestMove
+        node->value = minEval;
         return minEval;
     }
 }

@@ -4,6 +4,7 @@
 
 #include "..\game\Gamestate.h" // For GameState, Move
 #include "..\core\chess_move.h" // For Move if not fully in Gamestate.h
+#include "..\core\evaluate_system.h" // For evaluateState function
 #include "stdlib.h"             // For malloc, free, NULL
 #include "..\core\boolean.h"    // For boolean type (assuming this defines 'boolean' and related values)
 #include <limits.h>             // For INT_MIN, INT_MAX
@@ -28,7 +29,6 @@ typedef struct {
 	boolean isMaximizingPlayer;
 } GameTree;
 
-
 // Checks if the GameTree is empty (not used but declared)
 boolean isEmptyTree(GameTree X);
 
@@ -37,7 +37,7 @@ GameTree* createGameTree(GameState* rootState, int maxKedalaman, boolean isMaxim
 // Creates and initializes a single node for the game tree.
 address createNode(GameState* state, Move langkah, address parent, int kedalaman);
 
-int minimax(address node, int depth, boolean isMaximizingPlayer);
+int minimax(address node, int depth, boolean isMaximizingPlayer, int alpha, int beta);
 
 Move getBestMove(GameTree* tree); // Corrected and uncommented
 

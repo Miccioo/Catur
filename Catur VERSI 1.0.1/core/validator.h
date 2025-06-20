@@ -23,6 +23,8 @@ boolean isKingInCheck(Papan papan, WarnaBidak kingColor, Position kingPos);
 // Changed GameState* to void* in prototypes.
 boolean isLegalMove(void* state_ptr, Move* move); 
 Move* generateAllValidMoves(Papan papan, Player* currentPlayer, void* currentState_ptr, Bidak* enPassantTargetPawn); 
-boolean isCheckmate(void* state_ptr); 
+boolean isCheckmate(void* state_ptr);
+Position findKingPosition(Papan *papan, WarnaBidak warna);
+int countLegalMoves(Papan papan, int x, int y, Player *player);
 
 #endif

@@ -143,9 +143,10 @@ void classicChess(GameType type, VersusOption mode) {
             fprintf(stderr, "Invalid game mode\n");
             return;
 	}
-    initGameState(&state, &putih, &hitam); // Initialize GameState with pointers to local Player objects
+	
+    initGameState(&state, &putih, &hitam);
 
-    while (!isGameOver(&state)) { // Check game over condition (checkmate or draw)
+    while (!isGameOver(&state)) {
         clearScreen();
         printPapan(state.papan);
 
@@ -174,7 +175,7 @@ void classicChess(GameType type, VersusOption mode) {
             Move* possibleMovesForSelectedPiece = NULL;
 
             boolean pieceSelected = false;
-            while (!pieceSelected) { // Loop ensures a valid piece is selected
+            while (!pieceSelected) {
                 clearScreen();
                 printPapan(state.papan);
                 printCentered(turnMsg, termWidth, BOLD BRIGHT_YELLOW);
@@ -381,12 +382,13 @@ void classicChess(GameType type, VersusOption mode) {
             GameTree* tree = (GameTree*)createGameTree(&state, 3, (state.giliran->warna == PUTIH)); // AI engine will call generateAllValidMoves
 
             if (tree != NULL) {
-                minimax(tree->root, tree->maxKedalaman, tree->isMaximizingPlayer);
+                minimax(tree->root, tree->maxKedalaman, tree->isMaximizingPlayer, INT_MIN, INT_MAX);
                 Move bestMove = getBestMove(tree);
                 applyMove(&state, &bestMove);
             } else {
                 printCentered("Failed to create AI game tree!", termWidth, BOLD BRIGHT_RED);
             }
+            printCentered("Click to continue...", termWidth, BOLD BRIGHT_CYAN);
             waitForKeyPress();
         }
     }
@@ -404,6 +406,18 @@ void classicChess(GameType type, VersusOption mode) {
     } else {
         strcpy(resultMsg, "Game Over (unknown reason)!"); // Should not happen if isGameOver is correct
     }
+    
+    int scorePutih = getScorePutih(state.pemainHitam, state.pemainPutih);
+    int scoreHitam = getScoreHitam(state.pemainHitam, state.pemainPutih);
+    
+    if (state.giliran->warna == PUTIH) {
+    	state.pemainHitam->skor = state.pemainHitam->skor - scoreHitam;
+    	state.pemainPutih->skor = state.pemainPutih->skor + scorePutih;
+	} 
+	else {
+    	state.pemainHitam->skor = state.pemainHitam->skor + scoreHitam;
+    	state.pemainPutih->skor = state.pemainPutih->skor - scorePutih;		
+	}
 
     printCentered(resultMsg, termWidth, BOLD BRIGHT_GREEN);
     waitForKeyPress();
