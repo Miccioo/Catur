@@ -18,6 +18,11 @@ Bersiaplah untuk game di mana bidak dapat melampaui batasnya! Dalam Catur Mode E
 
 * **Mekanisme Penggabungan:** Gabungkan bidak seperti Kuda dan Gajah untuk menciptakan penyerang yang tangguh, atau Benteng dan Pion untuk terobosan yang tidak terduga.
 * **Batas Nilai:** Batas nilai maksimum 8 menambahkan batasan strategis, memastikan evolusi yang seimbang dan mencegah bidak menjadi terlalu kuat.
+* PION_BERAT: Sekarang bisa bergerak 1 kotak ke samping secara ortogonal, selain gerakan Pion biasa.
+* (KSATRIA_PIONIR, KUDA_BERPELINDUNG, GAJAH_PENJAGA, GAJAH_BIJAKSANA, BENTENG_PENYERBU, BENTENG_PIONIR): Bidak-bidak ini akan bisa melakukan gerakan dari kedua komponen aslinya (misalnya, KSATRIA_PIONIR bisa bergerak seperti Kuda ATAU seperti Pion). Ini diimplementasikan dengan mengecek kedua set kondisi gerakan dalam satu case.
+* KSATRIA_GANDA (Kuda + Kuda): Bisa bergerak seperti Kuda biasa DAN bisa bergerak 1 kotak lurus ke segala arah (seperti Raja, tetapi tanpa castling).
+* KOMANDAN_MEDAN/PENGUASA_GARIS_DEPAN (Kuda + Gajah): Bisa bergerak seperti Kuda ATAU seperti Gajah.
+* GAJAH_AGUNG (Gajah + Gajah): Bisa bergerak seperti Gajah biasa DAN bisa bergerak 1 kotak lurus ke segala arah (seperti Raja, tetapi tanpa castling).
 
 ### 3. Catur Mode Zombie
 
@@ -38,9 +43,9 @@ Instruksi terperinci tentang cara mengatur dan menjalankan ChessGame akan segera
 
 Proyek ini diwujudkan oleh tim beranggotakan tiga pengembang yang berdedikasi:
 
-* [Nama Anda 1] [NIM] (KETUA)
-* [Nama Anda 2] [NIM]
-* [Nama Anda 3] [NIM]
+* [Zaidan Arkan]     [241524030] (KETUA)
+* [Nasrul Wahid]     [241524019]
+* [Rizki Nurmahmudi] [241524027]
 
 ---
 
