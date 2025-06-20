@@ -1,0 +1,5 @@
+r 1 0 0 1000
+a a 0 0 1000
+arkan password 0 0 1000
+mau kan 0 0 1000
+kumis kumis 0 0 1000
