@@ -1,6 +1,6 @@
 #include "papan.h"
 #include <stdio.h>
-#include <stdlib.h> // For abs() if used, but math.h also provides it.
+#include <stdlib.h> 
 
 void initPapan(Papan *papan) {
     // Initialize empty board
@@ -8,12 +8,13 @@ void initPapan(Papan *papan) {
     for (y = 0; y < UKURAN_PAPAN; y++) {
         for (x = 0; x < UKURAN_PAPAN; x++) {
             Bidak kosong;
-            initBidak(&kosong, TIDAK_ADA, TANPA_WARNA, x, y, -1);
+            // Pastikan bidak kosong diinisialisasi dengan TIDAK_ADA dan ID -1
+            initBidak(&kosong, TIDAK_ADA, TANPA_WARNA, x, y, -1); 
             papan->grid[y][x] = kosong;
         }
     }
     
-    // Initialize white pieces
+    // Initialize black pieces (top of the board, row 0 and 1)
     int idCounter = 0; 
     
     // Row 0 (index 0): Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook (Black)
@@ -31,7 +32,7 @@ void initPapan(Papan *papan) {
         initBidak(&(papan->grid[1][x]), PION, HITAM, x, 1, idCounter++);
     }
     
-    // Initialize black pieces (should be white based on standard chess board setup)
+    // Initialize white pieces (bottom of the board, row 7 and 6)
     // Row 7 (index 7): Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook (White)
     initBidak(&(papan->grid[7][0]), BENTENG, PUTIH, 0, 7, idCounter++);
     initBidak(&(papan->grid[7][1]), KUDA, PUTIH, 1, 7, idCounter++);
@@ -49,7 +50,6 @@ void initPapan(Papan *papan) {
 }
 
 void printPapan(Papan papan) {
-    // Use macros from bidak.h for consistency
     const int VISUAL_HEIGHT = BIDAK_VISUAL_HEIGHT;
     const int CELL_WIDTH = BIDAK_VISUAL_WIDTH;
 
@@ -57,14 +57,14 @@ void printPapan(Papan papan) {
     char col_char_val; 
 
     // Print column labels at the top
-    printf("\n    "); // 4 initial spaces to offset row labels
+    printf("\n    "); 
     for (col_char_val = 0; col_char_val < UKURAN_PAPAN; col_char_val++) {
-        printf("          %c          ", 'a' + col_char_val); // 10 spaces, char, 10 spaces
+        printf("%*s%c%*s", (CELL_WIDTH / 2) - 1, "", 'a' + col_char_val, (CELL_WIDTH / 2), ""); 
     }
     printf("\n");
 
     // Print top horizontal line
-    printf("   +"); // Prefix for top horizontal line
+    printf("   +"); 
     for (x = 0; x < UKURAN_PAPAN; x++) {
         for (i = 0; i < CELL_WIDTH; i++) {
             printf("-");
@@ -73,21 +73,20 @@ void printPapan(Papan papan) {
     }
     printf("\n");
 
-    for (y = 0; y < UKURAN_PAPAN; y++) {
-        for (row_visual = 0; row_visual < VISUAL_HEIGHT; row_visual++) {
+    for (y = 0; y < UKURAN_PAPAN; y++) { // Iterasi untuk setiap baris papan
+        for (row_visual = 0; row_visual < VISUAL_HEIGHT; row_visual++) { // Iterasi untuk setiap baris visual bidak
             if (row_visual == VISUAL_HEIGHT / 2) { 
                 printf("%d  |", 8 - y); // Row number centered vertically in cell
             } else {
                 printf("   |"); // Padding for row number
             }
 
-            for (x = 0; x < UKURAN_PAPAN; x++) {
+            for (x = 0; x < UKURAN_PAPAN; x++) { // Iterasi untuk setiap kolom
                 Bidak b = papan.grid[y][x];
 				
-                printBidakColor(b, row_visual, x);
+                printBidakColor(b, row_visual, y, x); 
                 
-                printf("|");
-                printf(RESETCOLOR);
+                printf("|"); 
             }
             
             if (row_visual == VISUAL_HEIGHT / 2) { 
@@ -110,7 +109,7 @@ void printPapan(Papan papan) {
     // Print column labels at the bottom
     printf("    "); 
     for (col_char_val = 0; col_char_val < UKURAN_PAPAN; col_char_val++) {
-        printf("          %c          ", 'a' + col_char_val); // 10 spaces, char, 10 spaces
+        printf("%*s%c%*s", (CELL_WIDTH / 2) - 1, "", 'a' + col_char_val, (CELL_WIDTH / 2), ""); 
     }
     printf("\n\n");
 }
@@ -128,9 +127,9 @@ Bidak getBidakAt(Papan papan, int x, int y) { // x is column, y is row
 
 void setBidakAt(Papan *papan, Bidak bidak, int x, int y) {
     if (x >= 0 && x < UKURAN_PAPAN && y >= 0 && y < UKURAN_PAPAN) {
-        bidak.x = x; // Update internal coordinates of the piece
+        bidak.x = x; 
         bidak.y = y;
-        papan->grid[y][x] = bidak; // Place piece at grid[row][column]
+        papan->grid[y][x] = bidak; 
     }
 }
 
@@ -140,79 +139,97 @@ void pindahkanBidak(Papan *papan, Move* move) {
 	int xTujuan = move->to.col;
 	int yTujuan = move->to.row;
     
-    // Declare dx here
-    int dx = move->to.col - move->from.col; // NEW: Declare and calculate dx here
+    int dx = move->to.col - move->from.col; 
 	
     if (xAwal >= 0 && xAwal < UKURAN_PAPAN && yAwal >= 0 && yAwal < UKURAN_PAPAN &&
         xTujuan >= 0 && xTujuan < UKURAN_PAPAN && yTujuan >= 0 && yTujuan < UKURAN_PAPAN) {
         
-        Bidak bidak = papan->grid[yAwal][xAwal]; // Get piece from starting position (grid[row][column])
+        Bidak bidak = papan->grid[yAwal][xAwal]; 
         
-        // Handle Castling
         if (move->isCastling) {
             Bidak rook;
             Position rookFrom, rookTo;
-            // Determine which rook moved based on king's target column
-            if (dx == 2) { // Kingside Castling (e.g., e1 to g1)
-                rook = papan->grid[yAwal][7]; // Rook at h-file
+            if (dx == 2) { 
+                rook = papan->grid[yAwal][7]; 
                 rookFrom = (Position){yAwal, 7};
-                rookTo = (Position){yAwal, 5}; // Rook moves to f-file
-            } else { // Queenside Castling (e.g., e1 to c1)
-                rook = papan->grid[yAwal][0]; // Rook at a-file
+                rookTo = (Position){yAwal, 5}; 
+            } else { 
+                rook = papan->grid[yAwal][0]; 
                 rookFrom = (Position){yAwal, 0};
-                rookTo = (Position){yAwal, 3}; // Rook moves to d-file
+                rookTo = (Position){yAwal, 3}; 
             }
-            // Move the rook
             Bidak emptySquareRookFrom;
             initBidak(&emptySquareRookFrom, TIDAK_ADA, TANPA_WARNA, -1, -1, -1);
-            papan->grid[rookFrom.row][rookFrom.col] = emptySquareRookFrom; // Clear rook's original spot
-            setBidakAt(papan, rook, rookTo.col, rookTo.row); // Place rook at new spot
-            papan->grid[rookTo.row][rookTo.col].hasMoved = 1; // Mark rook as moved
+            papan->grid[rookFrom.row][rookFrom.col] = emptySquareRookFrom; 
+            setBidakAt(papan, rook, rookTo.col, rookTo.row); 
+            papan->grid[rookTo.row][rookTo.col].hasMoved = 1; 
         }
         
-        // Handle En Passant Capture
         if (move->isEnPassant) {
-            // The captured pawn is on the 'to' square's row, but 'from' square's column
             Bidak emptySquareCapturedPawn;
             initBidak(&emptySquareCapturedPawn, TIDAK_ADA, TANPA_WARNA, -1, -1, -1);
-            // Clear the captured pawn's square
             papan->grid[move->from.row][move->to.col] = emptySquareCapturedPawn;
         }
 
-        // Mark the moved piece as having moved
         bidak.hasMoved = 1;
 
-        // Handle Pawn Promotion (type change) - The piece's type is already updated in move->promotionTo
         if (bidak.tipe == PION && (yTujuan == 0 || yTujuan == 7)) {
-            // This is where the actual piece type changes on the board
             bidak.tipe = move->promotionTo; 
         }
 
-        // Clear starting position
         Bidak emptySquareFrom; 
         initBidak(&emptySquareFrom, TIDAK_ADA, TANPA_WARNA, xAwal, yAwal, -1);
-        papan->grid[yAwal][xAwal] = emptySquareFrom; // Set starting square to empty
+        papan->grid[yAwal][xAwal] = emptySquareFrom; 
 
-        // Place the piece (possibly promoted) at the target position
         setBidakAt(papan, bidak, xTujuan, yTujuan);
     }
 }
 
 boolean isEmptyBidak(Papan* papan, int x, int y) {
-	return papan->grid[y][x].tipe == TIDAK_ADA; // Access grid as [row][column]
+	return papan->grid[y][x].tipe == TIDAK_ADA; 
 }
 
-//Position findKingPosition(Papan papan, WarnaBidak kingColor) {
-//    Position kingPos = {-1, -1}; // Default invalid position
-//    int r, c; // Declared loop variables here for C89/ANSI C compatibility
-//    for (r = 0; r < UKURAN_PAPAN; r++) {
-//        for (c = 0; c < UKURAN_PAPAN; c++) {
-//            Bidak b = getBidakAt(papan, c, r);
-//            if (b.tipe == RAJA && b.warna == kingColor) {
-//                kingPos = (Position){r, c};
-//                return kingPos;
-//            }
-//        }
-//    }
-//    return kingPos; // Should ideally always find the king
-//}
+// Position findKingPosition(Papan papan, WarnaBidak kingColor) {
+//     Position kingPos = {-1, -1}; 
+//     int r, c; 
+//     for (r = 0; r < UKURAN_PAPAN; r++) {
+//         for (c = 0; c < UKURAN_PAPAN; c++) {
+//             Bidak b = getBidakAt(papan, c, r);
+//             if (b.tipe == RAJA && b.warna == kingColor) {
+//                 kingPos = (Position){r, c};
+//                 return kingPos;
+//             }
+//         }
+//     }
+//     return kingPos; 
+// }
+
+int getBidakValue(TipeBidak tipe) {
+    switch (tipe) {
+        case PION: return NILAI_PION;
+        case KUDA: return NILAI_KUDA;
+        case GAJAH: return NILAI_GAJAH;
+        case BENTENG: return NILAI_BENTENG;
+        case MENTERI: return NILAI_MENTERI;
+        case RAJA: return NILAI_RAJA; 
+        case PION_BERAT: return NILAI_PION + NILAI_PION; 
+        case KSATRIA_PIONIR: return NILAI_PION + NILAI_KUDA;
+        case GAJAH_PENJAGA: return NILAI_PION + NILAI_GAJAH;
+        case BENTENG_PENYERBU: return NILAI_PION + NILAI_BENTENG;
+        case KUDA_BERPELINDUNG: return NILAI_KUDA + NILAI_PION;
+        case KSATRIA_GANDA: return NILAI_KUDA + NILAI_KUDA;
+        case KOMANDAN_MEDAN: return NILAI_KUDA + NILAI_GAJAH;
+        case GAJAH_BIJAKSANA: return NILAI_GAJAH + NILAI_PION;
+        case PENGUASA_GARIS_DEPAN: return NILAI_GAJAH + NILAI_KUDA;
+        case GAJAH_AGUNG: return NILAI_GAJAH + NILAI_GAJAH;
+        case BENTENG_PIONIR: return NILAI_BENTENG + NILAI_PION;
+        case ZOMBIE_PION:
+        case ZOMBIE_BENTENG:
+        case ZOMBIE_GAJAH:
+        case ZOMBIE_KUDA:
+        case ZOMBIE_MENTERI:
+        case ZOMBIE_RAJA:
+        case TIDAK_ADA: return 0;
+        default: return 0; 
+    }
+}

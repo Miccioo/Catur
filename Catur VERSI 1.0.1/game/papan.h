@@ -31,6 +31,9 @@ void pindahkanBidak(Papan *papan, Move* move);
 boolean isEmptyBidak(Papan* papan, int x, int y);
 
 // New: Function to find the position of a specific king
-//Position findKingPosition(Papan papan, WarnaBidak kingColor);
+// Position findKingPosition(Papan papan, WarnaBidak kingColor);
+
+// New: Function to get the value of a piece
+int getBidakValue(TipeBidak tipe);
 
 #endif

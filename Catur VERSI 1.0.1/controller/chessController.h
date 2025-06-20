@@ -20,4 +20,7 @@ GameState modeEVE();
 // Fungsi baru untuk menampilkan tabel langkah valid
 void displayValidMovesTable(Papan papan, Move* validMoves, int termWidth);
 
+// New: Function to handle Evolve mode actions (combining pieces)
+boolean handleEvolveAction(GameState* state, int termWidth);
+
 #endif

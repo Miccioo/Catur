@@ -116,6 +116,230 @@ void handleGameType(int termWidth, GameType type) {
     }
 }
 
+// New: Function to handle Evolve mode specific actions (combining pieces)
+boolean handleEvolveAction(GameState* state, int termWidth) {
+    clearScreen();
+    printPapan(state->papan);
+    printCentered("EVOLVE MODE: Choose two pieces to combine.", termWidth, BOLD BRIGHT_YELLOW);
+    printCentered("Max combined value is 8. Type 'cancel' to go back.", termWidth, BOLD WHITE);
+
+    Position pos1 = {-1, -1}, pos2 = {-1, -1};
+    char input_pos[10];
+    boolean validSelection = false;
+    Bidak piece1, piece2;
+
+    // Select first piece
+    while (!validSelection) {
+        printCentered("Enter position of first piece (e.g., e2) or 'cancel': ", termWidth, BOLD WHITE);
+        if (fgets(input_pos, sizeof(input_pos), stdin) == NULL) return false;
+        input_pos[strcspn(input_pos, "\n")] = 0;
+        char lowerInput[10];
+        int k;
+        for (k = 0; input_pos[k]; k++) lowerInput[k] = tolower(input_pos[k]);
+
+        if (strcmp(lowerInput, "cancel") == 0) return false;
+
+        if (sscanf(input_pos, "%c%c", &lowerInput[0], &lowerInput[1]) == 2) {
+            pos1.col = tolower(lowerInput[0]) - 'a';
+            pos1.row = 8 - (lowerInput[1] - '0');
+
+            piece1 = getBidakAt(state->papan, pos1.col, pos1.row);
+
+            if (piece1.id == -1 || piece1.warna != state->giliran->warna) {
+                printCentered("Not your piece or empty. Try again.", termWidth, BOLD BRIGHT_RED);
+                waitForKeyPress();
+                clearScreen();
+                printPapan(state->papan);
+                printCentered("EVOLVE MODE: Choose two pieces to combine.", termWidth, BOLD BRIGHT_YELLOW);
+                printCentered("Max combined value is 8. Type 'cancel' to go back.", termWidth, BOLD WHITE);
+                continue;
+            }
+            if (piece1.tipe == RAJA || piece1.tipe == MENTERI) { // Raja dan Menteri tidak bisa digabungkan
+                printCentered("King and Queen cannot be combined. Try again.", termWidth, BOLD BRIGHT_RED);
+                waitForKeyPress();
+                clearScreen();
+                printPapan(state->papan);
+                printCentered("EVOLVE MODE: Choose two pieces to combine.", termWidth, BOLD BRIGHT_YELLOW);
+                printCentered("Max combined value is 8. Type 'cancel' to go back.", termWidth, BOLD WHITE);
+                continue;
+            }
+            validSelection = true;
+        } else {
+            printCentered("Invalid input format. Use 'e2'.", termWidth, BOLD BRIGHT_RED);
+            waitForKeyPress();
+            clearScreen();
+            printPapan(state->papan);
+            printCentered("EVOLVE MODE: Choose two pieces to combine.", termWidth, BOLD BRIGHT_YELLOW);
+            printCentered("Max combined value is 8. Type 'cancel' to go back.", termWidth, BOLD WHITE);
+        }
+    }
+    
+    clearScreen();
+    printPapan(state->papan);
+    printCentered("Selected first piece at:", termWidth, BOLD BRIGHT_GREEN);
+    char piece1_pos_str[10]; sprintf(piece1_pos_str, "%c%d", 'a'+pos1.col, 8-pos1.row);
+    printCentered(piece1_pos_str, termWidth, BOLD BRIGHT_GREEN);
+    printCentered("Enter position of second piece (e.g., d4) or 'cancel': ", termWidth, BOLD WHITE);
+
+    validSelection = false;
+    // Select second piece
+    while (!validSelection) {
+        if (fgets(input_pos, sizeof(input_pos), stdin) == NULL) return false;
+        input_pos[strcspn(input_pos, "\n")] = 0;
+        char lowerInput[10];
+        int k;
+        for (k = 0; input_pos[k]; k++) lowerInput[k] = tolower(input_pos[k]);
+
+        if (strcmp(lowerInput, "cancel") == 0) return false;
+
+        if (sscanf(input_pos, "%c%c", &lowerInput[0], &lowerInput[1]) == 2) {
+            pos2.col = tolower(lowerInput[0]) - 'a';
+            pos2.row = 8 - (lowerInput[1] - '0');
+
+            if (pos1.row == pos2.row && pos1.col == pos2.col) {
+                printCentered("Cannot combine a piece with itself. Choose a different piece.", termWidth, BOLD BRIGHT_RED);
+                waitForKeyPress();
+                clearScreen();
+                printPapan(state->papan);
+                printCentered("Selected first piece at:", termWidth, BOLD BRIGHT_GREEN);
+                printCentered(piece1_pos_str, termWidth, BOLD BRIGHT_GREEN);
+                printCentered("Enter position of second piece (e.g., d4) or 'cancel': ", termWidth, BOLD WHITE);
+                continue;
+            }
+
+            piece2 = getBidakAt(state->papan, pos2.col, pos2.row);
+
+            if (piece2.id == -1 || piece2.warna != state->giliran->warna) {
+                printCentered("Not your piece, empty, or wrong color. Try again.", termWidth, BOLD BRIGHT_RED);
+                waitForKeyPress();
+                clearScreen();
+                printPapan(state->papan);
+                printCentered("Selected first piece at:", termWidth, BOLD BRIGHT_GREEN);
+                printCentered(piece1_pos_str, termWidth, BOLD BRIGHT_GREEN);
+                printCentered("Enter position of second piece (e.g., d4) or 'cancel': ", termWidth, BOLD WHITE);
+                continue;
+            }
+            if (piece2.tipe == RAJA || piece2.tipe == MENTERI) { // Raja dan Menteri tidak bisa digabungkan
+                printCentered("King and Queen cannot be combined. Try again.", termWidth, BOLD BRIGHT_RED);
+                waitForKeyPress();
+                clearScreen();
+                printPapan(state->papan);
+                printCentered("Selected first piece at:", termWidth, BOLD BRIGHT_GREEN);
+                printCentered(piece1_pos_str, termWidth, BOLD BRIGHT_GREEN);
+                printCentered("Enter position of second piece (e.g., d4) or 'cancel': ", termWidth, BOLD WHITE);
+                continue;
+            }
+            validSelection = true;
+        } else {
+            printCentered("Invalid input format. Use 'e2'.", termWidth, BOLD BRIGHT_RED);
+            waitForKeyPress();
+            clearScreen();
+            printPapan(state->papan);
+            printCentered("Selected first piece at:", termWidth, BOLD BRIGHT_GREEN);
+            printCentered(piece1_pos_str, termWidth, BOLD BRIGHT_GREEN);
+            printCentered("Enter position of second piece (e.g., d4) or 'cancel': ", termWidth, BOLD WHITE);
+        }
+    }
+
+    // Determine combined piece type
+    int value1 = getBidakValue(piece1.tipe);
+    int value2 = getBidakValue(piece2.tipe);
+    int combinedValue = value1 + value2;
+
+    if (combinedValue > 8) {
+        printCentered("Combined value exceeds 8. Cannot evolve.", termWidth, BOLD BRIGHT_RED);
+        waitForKeyPress();
+        return false;
+    }
+
+    TipeBidak evolvedType = TIDAK_ADA;
+
+    // Logic for determining evolved piece type
+    // This is based on your "desain bidak.c" and the assumed values
+    if ((piece1.tipe == PION && piece2.tipe == PION) || (piece1.tipe == PION_BERAT && piece2.tipe == PION) || (piece1.tipe == PION && piece2.tipe == PION_BERAT)) {
+        evolvedType = PION_BERAT; // Pion + Pion (value 2)
+    } else if ((value1 == NILAI_PION && value2 == NILAI_KUDA) || (value1 == NILAI_KUDA && value2 == NILAI_PION)) {
+        evolvedType = KSATRIA_PIONIR; // Pion + Kuda (value 4)
+    } else if ((value1 == NILAI_PION && value2 == NILAI_GAJAH) || (value1 == NILAI_GAJAH && value2 == NILAI_PION)) {
+        evolvedType = GAJAH_PENJAGA; // Pion + Gajah (value 4)
+    } else if ((value1 == NILAI_PION && value2 == NILAI_BENTENG) || (value1 == NILAI_BENTENG && value2 == NILAI_PION)) {
+        evolvedType = BENTENG_PENYERBU; // Pion + Benteng (value 6)
+    } else if ((value1 == NILAI_KUDA && value2 == NILAI_KUDA)) {
+        evolvedType = KSATRIA_GANDA; // Kuda + Kuda (value 6)
+    } else if ((value1 == NILAI_KUDA && value2 == NILAI_GAJAH) || (value1 == NILAI_GAJAH && value2 == NILAI_KUDA)) {
+        evolvedType = KOMANDAN_MEDAN; // Kuda + Gajah (value 6)
+    } else if ((value1 == NILAI_GAJAH && value2 == NILAI_GAJAH)) {
+        evolvedType = GAJAH_AGUNG; // Gajah + Gajah (value 6)
+    } else {
+        // Handle other combinations or show an error
+        printCentered("Invalid combination for Evolve. Try again.", termWidth, BOLD BRIGHT_RED);
+        waitForKeyPress();
+        return false;
+    }
+    
+    // Choose where to place the new evolved piece (on pos1 or pos2)
+    clearScreen();
+    printPapan(state->papan);
+    printCentered("Evolve successful! Choose where to place the new piece:", termWidth, BOLD BRIGHT_GREEN);
+    char choose_pos_msg[100];
+    sprintf(choose_pos_msg, "Type '%c%d' (for first piece's spot) or '%c%d' (for second piece's spot): ",
+            'a' + pos1.col, 8 - pos1.row, 'a' + pos2.col, 8 - pos2.row);
+    printCentered(choose_pos_msg, termWidth, BOLD WHITE);
+
+    Position finalPos;
+    boolean validFinalPos = false;
+    while(!validFinalPos) {
+        if (fgets(input_pos, sizeof(input_pos), stdin) == NULL) return false;
+        input_pos[strcspn(input_pos, "\n")] = 0;
+        char lowerInput[10];
+        int k;
+        for (k = 0; input_pos[k]; k++) lowerInput[k] = tolower(input_pos[k]);
+
+        if (sscanf(input_pos, "%c%c", &lowerInput[0], &lowerInput[1]) == 2) {
+            finalPos.col = tolower(lowerInput[0]) - 'a';
+            finalPos.row = 8 - (lowerInput[1] - '0');
+
+            if ((finalPos.row == pos1.row && finalPos.col == pos1.col) ||
+                (finalPos.row == pos2.row && finalPos.col == pos2.col)) {
+                validFinalPos = true;
+            } else {
+                printCentered("Invalid position. Must be one of the original piece positions. Try again.", termWidth, BOLD BRIGHT_RED);
+                waitForKeyPress();
+                clearScreen();
+                printPapan(state->papan);
+                printCentered("Evolve successful! Choose where to place the new piece:", termWidth, BOLD BRIGHT_GREEN);
+                printCentered(choose_pos_msg, termWidth, BOLD WHITE);
+            }
+        } else {
+            printCentered("Invalid input format. Use 'e2'.", termWidth, BOLD BRIGHT_RED);
+            waitForKeyPress();
+            clearScreen();
+            printPapan(state->papan);
+            printCentered("Evolve successful! Choose where to place the new piece:", termWidth, BOLD BRIGHT_GREEN);
+            printCentered(choose_pos_msg, termWidth, BOLD WHITE);
+        }
+    }
+
+
+    // Perform the evolution
+    Bidak newPiece;
+    initBidak(&newPiece, evolvedType, state->giliran->warna, finalPos.col, finalPos.row, -1); // -1 for new ID, needs proper ID management
+
+    // Set both original positions to empty
+    Bidak emptyBidak;
+    initBidak(&emptyBidak, TIDAK_ADA, TANPA_WARNA, -1, -1, -1);
+    setBidakAt(&state->papan, emptyBidak, pos1.col, pos1.row);
+    setBidakAt(&state->papan, emptyBidak, pos2.col, pos2.row);
+
+    // Place the new evolved piece
+    setBidakAt(&state->papan, newPiece, finalPos.col, finalPos.row);
+
+    printCentered("Pieces evolved successfully!", termWidth, BOLD BRIGHT_GREEN);
+    waitForKeyPress();
+    return true; // Evolution successful
+}
+
+
 void classicChess(GameType type, VersusOption mode) {
     GameState state;
     Player putih, hitam; // Player objects for the game
@@ -143,10 +367,9 @@ void classicChess(GameType type, VersusOption mode) {
             fprintf(stderr, "Invalid game mode\n");
             return;
 	}
-	
-    initGameState(&state, &putih, &hitam);
+    initGameState(&state, &putih, &hitam); // Initialize GameState with pointers to local Player objects
 
-    while (!isGameOver(&state)) {
+    while (!isGameOver(&state)) { // Check game over condition (checkmate or draw)
         clearScreen();
         printPapan(state.papan);
 
@@ -175,7 +398,7 @@ void classicChess(GameType type, VersusOption mode) {
             Move* possibleMovesForSelectedPiece = NULL;
 
             boolean pieceSelected = false;
-            while (!pieceSelected) {
+            while (!pieceSelected) { // Loop ensures a valid piece is selected
                 clearScreen();
                 printPapan(state.papan);
                 printCentered(turnMsg, termWidth, BOLD BRIGHT_YELLOW);
@@ -183,7 +406,14 @@ void classicChess(GameType type, VersusOption mode) {
                     (state.giliran->warna == HITAM && state.isBlackKingInCheck)) {
                     printCentered("CHECK!", termWidth, BOLD BRIGHT_RED);
                 }
-                printCentered("Enter the position of the piece you want to move (e.g., e2), 'undo', or 'quit': ", termWidth, BOLD WHITE);
+                
+                // New: Prompt for Evolve action in Evolve Chess PvP mode
+                if (type == GAME_EVOLVE_CHESS && mode == PLAYER_VS_PLAYER) {
+                    printCentered("Enter the position of the piece you want to move (e.g., e2), 'evolve', 'undo', or 'quit': ", termWidth, BOLD WHITE);
+                } else {
+                    printCentered("Enter the position of the piece you want to move (e.g., e2), 'undo', or 'quit': ", termWidth, BOLD WHITE);
+                }
+
 
                 char input_from[10];
                 if (fgets(input_from, sizeof(input_from), stdin) == NULL) {
@@ -198,6 +428,15 @@ void classicChess(GameType type, VersusOption mode) {
                 }
                 lowerInput_from[k] = '\0';
 
+                // Handle Evolve option
+                if (type == GAME_EVOLVE_CHESS && mode == PLAYER_VS_PLAYER && strcmp(lowerInput_from, "evolve") == 0) {
+                    if (handleEvolveAction(&state, termWidth)) {
+                        switchTurn(&state); // Evolution counts as a turn
+                        updateGameStatus(&state);
+                    }
+                    continue; // Go back to selecting a piece/action
+                }
+                
                 if (strcmp(lowerInput_from, "undo") == 0) {
                     if (state.history != NULL) {
                         undoMove(&state);
@@ -335,7 +574,7 @@ void classicChess(GameType type, VersusOption mode) {
 
                     if (foundExactMove) {
                         // Handle Pawn Promotion selection [New]
-                        if (playerMove.bidak == PION && ((playerMove.to.row == 0 && playerMove.bidak == PUTIH) || (playerMove.to.row == 7 && playerMove.bidak == HITAM))) {
+                        if (playerMove.bidak == PION && ((playerMove.to.row == 0 && state.giliran->warna == PUTIH) || (playerMove.to.row == 7 && state.giliran->warna == HITAM))) {
                             TipeBidak promotedTo = TIDAK_ADA;
                             while (promotedTo == TIDAK_ADA) {
                                 clearScreen();
@@ -388,7 +627,6 @@ void classicChess(GameType type, VersusOption mode) {
             } else {
                 printCentered("Failed to create AI game tree!", termWidth, BOLD BRIGHT_RED);
             }
-            printCentered("Click to continue...", termWidth, BOLD BRIGHT_CYAN);
             waitForKeyPress();
         }
     }
@@ -429,8 +667,11 @@ void evolveChess(GameType type, VersusOption mode) {
 
     clearScreen();
     printCentered("Evolve Chess Mode", termWidth, BOLD BRIGHT_CYAN);
-    printCentered("(This mode will be implemented in future versions)", termWidth, BOLD WHITE);
+    printCentered("Starting Player vs Player Evolve Chess...", termWidth, BOLD BRIGHT_GREEN);
     waitForKeyPress();
+
+    // Re-use classicChess logic for now, with GameType passed correctly
+    classicChess(type, mode); // Pass 'type' so classicChess knows it's Evolve mode
 }
 
 void zombieChess(GameType type, VersusOption mode) {
